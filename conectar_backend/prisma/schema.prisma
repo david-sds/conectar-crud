@@ -7,3 +7,71 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role   
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userClients UserClient[]
+}
+
+model Client {
+  id          Int      @id @default(autoincrement())
+  cnpj        String   @db.Char(14)
+  name        String
+  legalName   String
+  // tags  
+  status      Status  
+  conectaPlus Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  addressId Int?
+  address   Address? @relation(fields: [addressId], references: [id])
+
+  userClients UserClient[]
+}
+
+model Address {
+  id         Int      @id @default(autoincrement())
+  number     String?  @db.VarChar(16)
+  street     String   @db.VarChar(255)
+  district   String?  @db.VarChar(64)
+  city       String?  @db.VarChar(64)
+  state      String?  @db.VarChar(3)
+  country    String?  @db.VarChar(64)
+  zipCode    String?  @db.VarChar(16)
+  complement String?  @db.VarChar(1024)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  clients Client[]
+}
+
+model UserClient {
+  userId   Int
+  clientId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User   @relation(fields: [userId], references: [id])
+  client   Client @relation(fields: [clientId], references: [id])
+
+  @@id([userId, clientId])
+}
+
+
+enum Role {
+  ADMIN
+  USER
+} 
+
+enum Status {
+  INACTIVE
+  ACTIVE
+}
