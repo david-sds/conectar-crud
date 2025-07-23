@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from 'generated/prisma';
 import { comparePassword, hashPassword } from 'src/core/utils/hash.utils';
 import {
   handlePrismaError,
@@ -11,6 +12,9 @@ import { CredentialsDto } from './dto/credentials.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { TokenDecodeDto } from './dto/token-decode.dto';
 import { TokensDto } from './dto/tokens.dto';
+
+const accessTokenExpiration = 12;
+const refreshTokenExpiration = 60 * 60 * 24;
 
 @Injectable()
 export class AuthService {
@@ -37,16 +41,45 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const accessTokenExpiration = 60 * 60 * 12;
-    const refreshTokenExpiration = 60 * 60 * 24;
+    const tokens = await this._getTokensFromUserEntity(userEntity);
 
+    return tokens;
+  }
+
+  async refreshTokens(refreshToken: string): Promise<TokensDto> {
+    try {
+      const payload = await this.jwtService.verifyAsync<TokenDecodeDto>(
+        refreshToken,
+        {
+          secret: process.env.REFRESH_TOKEN_SECRET,
+        },
+      );
+
+      const userEntity = await this.authRepository.findUserEntityByEmail(
+        payload.email,
+      );
+
+      if (!userEntity) {
+        throw new UnauthorizedException('User no longer exists');
+      }
+
+      const tokens = await this._getTokensFromUserEntity(userEntity);
+
+      return tokens;
+    } catch (e) {
+      console.error(e);
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+  }
+
+  async _getTokensFromUserEntity(userEntity: User): Promise<TokensDto> {
     const payload: Partial<TokenDecodeDto> = {
       sub: userEntity.id,
       email: userEntity.email,
       role: userEntity.role,
     };
 
-    const [access_token, refresh_token] = await Promise.all([
+    const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: process.env.ACCESS_TOKEN_SECRET,
         expiresIn: accessTokenExpiration,
@@ -57,9 +90,9 @@ export class AuthService {
       }),
     ]);
 
-    return {
-      access_token,
-      refresh_token,
+    return <TokensDto>{
+      accessToken,
+      refreshToken,
     };
   }
 
