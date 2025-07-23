@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { comparePassword, hashPassword } from 'src/core/utils/hash.utils';
 import {
   handlePrismaError,
   isPrismaKnownError,
@@ -19,19 +20,30 @@ export class AuthService {
   ) {}
 
   async login(credentials: CredentialsDto): Promise<TokensDto> {
-    const user = await this.authRepository.findUserByCredentials(credentials);
+    const { email, password } = credentials;
 
-    if (!user) {
-      throw new UnauthorizedException();
+    const userEntity = await this.authRepository.findUserEntityByEmail(email);
+
+    if (!userEntity) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isPasswordValid = await comparePassword(
+      password,
+      userEntity.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const accessTokenExpiration = 60 * 60 * 12;
     const refreshTokenExpiration = 60 * 60 * 24;
 
     const payload: Partial<TokenDecodeDto> = {
-      sub: user.id,
-      email: user.email,
-      role: user.role,
+      sub: userEntity.id,
+      email: userEntity.email,
+      role: userEntity.role,
     };
 
     const [access_token, refresh_token] = await Promise.all([
@@ -53,7 +65,14 @@ export class AuthService {
 
   async register(registerUser: RegisterUserDto): Promise<UserDto> {
     try {
-      return await this.authRepository.register(registerUser);
+      const hashedPassword = await hashPassword(registerUser.password);
+
+      const userWithHashedPassword = {
+        ...registerUser,
+        password: hashedPassword,
+      };
+
+      return await this.authRepository.register(userWithHashedPassword);
     } catch (e) {
       if (isPrismaKnownError(e)) {
         handlePrismaError(e);

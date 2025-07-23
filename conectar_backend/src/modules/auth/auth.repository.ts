@@ -1,22 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { PrismaService } from 'src/core/database/prisma.service';
 import { UserDto } from '../users/dto/user.dto';
 import { entityToUserDto } from '../users/users.mapper';
-import { CredentialsDto } from './dto/credentials.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 
 @Injectable()
 export class AuthRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findUserByCredentials(
-    credentials: CredentialsDto,
-  ): Promise<UserDto | undefined> {
+  async findUserEntityByEmail(email: string): Promise<User | undefined> {
     const entity = await this.prismaService.user.findFirst({
-      where: { email: credentials.email, password: credentials.password },
+      where: { email: email },
     });
 
-    return entityToUserDto(entity);
+    return entity;
   }
 
   async register(user: RegisterUserDto): Promise<UserDto> {
