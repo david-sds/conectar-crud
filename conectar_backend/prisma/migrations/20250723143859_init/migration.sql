@@ -35,14 +35,14 @@ CREATE TABLE "Client" (
 -- CreateTable
 CREATE TABLE "Address" (
     "id" SERIAL NOT NULL,
-    "number" VARCHAR(16),
-    "street" VARCHAR(255) NOT NULL,
-    "district" VARCHAR(64),
-    "city" VARCHAR(64),
-    "state" VARCHAR(3),
-    "country" VARCHAR(64),
-    "zipCode" VARCHAR(16),
-    "complement" VARCHAR(1024),
+    "number" TEXT NOT NULL,
+    "street" TEXT NOT NULL,
+    "district" TEXT NOT NULL,
+    "city" TEXT NOT NULL,
+    "state" TEXT NOT NULL,
+    "country" TEXT NOT NULL,
+    "zipCode" TEXT NOT NULL,
+    "complement" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

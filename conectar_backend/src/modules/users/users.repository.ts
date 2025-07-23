@@ -1,27 +1,61 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/core/prisma/prisma.service';
+import { PrismaService } from 'src/core/database/prisma.service';
+import { UserDto } from './dto/user.dto';
+import { entityToUserDto } from './users.mapper';
 
 @Injectable()
 export class UsersRepository {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService) {}
 
-  findAll(): Promise<UserDto[]> {
-    return this.prismaService.;
+  async findAll(): Promise<UserDto[]> {
+    const entities = await this.prismaService.user.findMany();
+
+    return entities.map((e) => entityToUserDto(e));
   }
 
-  findOne(id: number): Promise<UserDto> {
-    return this.usersRepository.findOne(id);
+  async findOne(id: number): Promise<UserDto> {
+    const entity = await this.prismaService.user.findUnique({
+      where: { id: id },
+    });
+
+    return entityToUserDto(entity);
   }
 
-  create(user: UserDto): Promise<UserDto> {
-    return this.usersRepository.create(user);
+  async create(user: UserDto): Promise<UserDto> {
+    const entity = await this.prismaService.user.create({
+      data: {
+        email: user.email,
+        name: user.name,
+        password: process.env.DEFAULT_PASSWORD,
+        role: user.role,
+      },
+    });
+
+    return entityToUserDto(entity);
   }
 
-  update(id: number, user: Partial<UserDto>): Promise<UserDto> {
-    return this.usersRepository.update(id, user);
+  async update(id: number, user: Partial<UserDto>): Promise<UserDto> {
+    const entity = await this.prismaService.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+    });
+
+    return entityToUserDto(entity);
   }
 
-  delete(id: number): Promise<void> {
-    return this.usersRepository.delete(id);
+  async delete(id: number): Promise<UserDto> {
+    const entity = await this.prismaService.user.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    return entityToUserDto(entity);
   }
 }

@@ -1,3 +1,5 @@
+import { Role } from '@prisma/client';
+import { Expose } from 'class-transformer';
 import {
   IsDate,
   IsEnum,
@@ -5,28 +7,32 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { Role } from 'generated/prisma';
 
 export class UserDto {
-  @IsNumber()
+  @Expose()
   @IsOptional()
+  @IsNumber()
   id?: number;
 
+  @Expose()
   @IsString()
   name: string;
 
+  @Expose()
   @IsString()
   email: string;
 
-  @IsString()
-  password: string;
-
+  @Expose()
   @IsEnum(Role)
   role: Role;
 
+  @Expose()
+  @IsOptional()
   @IsDate()
-  createdAt: Date;
+  createdAt?: Date;
 
+  @Expose()
+  @IsOptional()
   @IsDate()
-  updatedAt: Date;
+  updatedAt?: Date;
 }

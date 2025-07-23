@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -35,11 +36,15 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() user: Partial<UserDto>,
   ): Promise<UserDto> {
+    if (!user) {
+      throw new BadRequestException('Invalid request body');
+    }
+
     return this.usersService.update(id, user);
   }
 
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  delete(@Param('id', ParseIntPipe) id: number): Promise<UserDto> {
     return this.usersService.delete(id);
   }
 }

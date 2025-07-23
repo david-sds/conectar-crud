@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  handlePrismaError,
+  isPrismaKnownError,
+} from 'src/core/utils/prisma-error-handler.util';
 import { UserDto } from './dto/user.dto';
 import { UsersRepository } from './users.repository';
 
@@ -6,23 +10,57 @@ import { UsersRepository } from './users.repository';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  findAll(): Promise<UserDto[]> {
-    return this.usersRepository.findAll();
+  async findAll(): Promise<UserDto[]> {
+    return await this.usersRepository.findAll();
   }
 
-  findOne(id: number): Promise<UserDto> {
-    return this.usersRepository.findOne(id);
+  async findOne(id: number): Promise<UserDto> {
+    try {
+      const user = await this.usersRepository.findOne(id);
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      return user;
+    } catch (e) {
+      if (isPrismaKnownError(e)) {
+        handlePrismaError(e);
+      }
+      throw e;
+    }
   }
 
-  create(user: UserDto): Promise<UserDto> {
-    return this.usersRepository.create(user);
+  async create(user: UserDto): Promise<UserDto> {
+    try {
+      return await this.usersRepository.create(user);
+    } catch (e) {
+      if (isPrismaKnownError(e)) {
+        handlePrismaError(e);
+      }
+      throw e;
+    }
   }
 
-  update(id: number, user: Partial<UserDto>): Promise<UserDto> {
-    return this.usersRepository.update(id, user);
+  async update(id: number, user: Partial<UserDto>): Promise<UserDto> {
+    try {
+      return await this.usersRepository.update(id, user);
+    } catch (e) {
+      if (isPrismaKnownError(e)) {
+        handlePrismaError(e);
+      }
+      throw e;
+    }
   }
 
-  delete(id: number): Promise<void> {
-    return this.usersRepository.delete(id);
+  async delete(id: number): Promise<UserDto> {
+    try {
+      return await this.usersRepository.delete(id);
+    } catch (e) {
+      if (isPrismaKnownError(e)) {
+        handlePrismaError(e);
+      }
+      throw e;
+    }
   }
 }
