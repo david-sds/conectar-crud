@@ -1,17 +1,11 @@
 import { Role } from '@prisma/client';
 import { Expose } from 'class-transformer';
-import {
-  IsDate,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsDate, IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class RegisterUserDto {
   @Expose()
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   id?: number;
 
   @Expose()

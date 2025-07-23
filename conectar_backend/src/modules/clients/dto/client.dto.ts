@@ -4,8 +4,8 @@ import {
   IsBoolean,
   IsDate,
   IsEnum,
+  IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   Matches,
@@ -16,7 +16,7 @@ import { AddressDto } from 'src/modules/address/dto/address.dto';
 export class ClientDto {
   @Expose()
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   id?: number;
 
   @Expose()

@@ -9,9 +9,12 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { Role } from 'generated/prisma';
+import { Roles } from 'src/core/decorators/roles.decorator';
 import { UserDto } from './dto/user.dto';
 import { UsersService } from './users.service';
 
+@Roles(Role.ADMIN)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

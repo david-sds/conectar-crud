@@ -28,7 +28,11 @@ export class AuthService {
     const accessTokenExpiration = 60 * 60 * 12;
     const refreshTokenExpiration = 60 * 60 * 24;
 
-    const payload: TokenDecodeDto = { sub: user.id, email: user.email };
+    const payload: Partial<TokenDecodeDto> = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
 
     const [access_token, refresh_token] = await Promise.all([
       this.jwtService.signAsync(payload, {
