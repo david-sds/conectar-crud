@@ -21,12 +21,20 @@ export class UsersRepository {
     return entityToUserDto(entity);
   }
 
+  async findOneByEmail(email: string): Promise<UserDto> {
+    const entity = await this.prismaService.user.findUnique({
+      where: { email: email },
+    });
+
+    return entityToUserDto(entity);
+  }
+
   async create(user: UserDto): Promise<UserDto> {
     const entity = await this.prismaService.user.create({
       data: {
         email: user.email,
-        name: user.name,
         password: process.env.DEFAULT_PASSWORD,
+        name: user.name,
         role: user.role,
       },
     });

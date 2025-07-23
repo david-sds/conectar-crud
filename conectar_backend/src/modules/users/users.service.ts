@@ -31,6 +31,23 @@ export class UsersService {
     }
   }
 
+  async findOneByEmail(email: string): Promise<UserDto> {
+    try {
+      const user = await this.usersRepository.findOneByEmail(email);
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      return user;
+    } catch (e) {
+      if (isPrismaKnownError(e)) {
+        handlePrismaError(e);
+      }
+      throw e;
+    }
+  }
+
   async create(user: UserDto): Promise<UserDto> {
     try {
       return await this.usersRepository.create(user);
