@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { UserDto } from './dto/user.dto';
-import { UsersRepository } from './users.repository';
+import { PrismaService } from 'src/core/prisma/prisma.service';
 
 @Injectable()
-export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+export class UsersRepository {
+  constructor(private readonly prismaService: PrismaService) {}
 
   findAll(): Promise<UserDto[]> {
-    return this.usersRepository.findAll();
+    return this.prismaService.;
   }
 
   findOne(id: number): Promise<UserDto> {
