@@ -1,4 +1,8 @@
 enum Routes {
+  initial(
+    name: 'initial',
+    path: '/',
+  ),
   login(
     name: 'login',
     path: '/login',

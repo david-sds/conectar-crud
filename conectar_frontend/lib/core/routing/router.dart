@@ -37,15 +37,19 @@ final _notLoggedStack = ShellRoute(
 );
 
 final router = GoRouter(
-  redirect: (context, state) {
-    return null;
-
-    // false ? Routes.home.path : Routes.login.path
-    // return Routes.login.path;
-  },
   routes: [
-    _loggedStack,
-    _notLoggedStack,
+    GoRoute(
+      path: Routes.initial.path,
+      name: Routes.initial.name,
+      redirect: (context, state) {
+        return null;
+        // return false ? Routes.home.path : Routes.login.path;
+      },
+      routes: [
+        _loggedStack,
+        _notLoggedStack,
+      ],
+    ),
   ],
   errorBuilder: (context, state) => const LoggedLayout(
     child: NotFoundScreen(),
