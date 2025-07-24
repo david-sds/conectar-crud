@@ -38,6 +38,12 @@ export class UsersController {
   }
 
   @Roles(Role.ADMIN)
+  @Get('inactive')
+  findInactiveUsers(): Promise<UserDto[]> {
+    return this.usersService.findInactiveUsers();
+  }
+
+  @Roles(Role.ADMIN)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<UserDto> {
     return this.usersService.findOne(id);

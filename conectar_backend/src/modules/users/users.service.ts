@@ -16,6 +16,10 @@ export class UsersService {
     return await this.usersRepository.findAll(query);
   }
 
+  async findInactiveUsers(): Promise<UserDto[]> {
+    return await this.usersRepository.findInactiveUsers(30);
+  }
+
   async findOne(id: number): Promise<UserDto> {
     try {
       const user = await this.usersRepository.findOne(id);

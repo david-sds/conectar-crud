@@ -1,5 +1,7 @@
-import { Body, Controller, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { Public } from 'src/core/decorators/public.decorator';
+import { jwtDecode } from 'src/core/utils/jwt.utils';
 import { UserDto } from '../users/dto/user.dto';
 import { AuthService } from './auth.service';
 import { CredentialsDto } from './dto/credentials.dto';
@@ -27,8 +29,9 @@ export class AuthController {
     return await this.authService.refreshTokens(refreshTokenDto.refreshToken);
   }
 
-  @Post('logout/:id')
-  async logout(@Param('id', ParseIntPipe) userId: number): Promise<void> {
-    return await this.authService.logout(userId);
+  @Post('logout')
+  async logout(@Req() req: Request): Promise<void> {
+    const tokenDecodeDto = jwtDecode(req);
+    return await this.authService.logout(tokenDecodeDto.sub);
   }
 }

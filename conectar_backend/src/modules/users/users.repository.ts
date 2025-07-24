@@ -76,6 +76,19 @@ export class UsersRepository {
     return where;
   }
 
+  async findInactiveUsers(sinceDays = 30): Promise<UserDto[]> {
+    const dateThreshold = new Date();
+    dateThreshold.setDate(dateThreshold.getDate() - sinceDays);
+
+    const entities = await this.prismaService.user.findMany({
+      where: {
+        OR: [{ lastLogin: { lt: dateThreshold } }],
+      },
+    });
+
+    return entities.map((e) => entityToUserDto(e));
+  }
+
   async findOne(id: number): Promise<UserDto> {
     const entity = await this.prismaService.user.findUnique({
       where: { id: id },
