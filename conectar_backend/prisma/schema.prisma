@@ -8,13 +8,15 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String    @unique
+  password     String
+  role         Role
+  refreshToken String?   @db.Text
+  lastLogin    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   userClients UserClient[]
 }
@@ -25,7 +27,7 @@ model Client {
   name        String
   legalName   String
   // tags  
-  status      Status  
+  status      Status
   conectaPlus Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -39,7 +41,7 @@ model Client {
 model Address {
   id         Int      @id @default(autoincrement())
   number     String
-  street     String 
+  street     String
   district   String
   city       String
   state      String
@@ -53,22 +55,21 @@ model Address {
 }
 
 model UserClient {
-  userId   Int
-  clientId Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  userId    Int
+  clientId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user     User   @relation(fields: [userId], references: [id])
-  client   Client @relation(fields: [clientId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+  client Client @relation(fields: [clientId], references: [id])
 
   @@id([userId, clientId])
 }
 
-
 enum Role {
   ADMIN
   USER
-} 
+}
 
 enum Status {
   INACTIVE

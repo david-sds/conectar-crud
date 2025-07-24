@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { Public } from 'src/core/decorators/public.decorator';
 import { UserDto } from '../users/dto/user.dto';
 import { AuthService } from './auth.service';
@@ -25,5 +25,10 @@ export class AuthController {
   @Post('refresh')
   async refresh(@Body() refreshTokenDto: refreshTokenDto): Promise<TokensDto> {
     return await this.authService.refreshTokens(refreshTokenDto.refreshToken);
+  }
+
+  @Post('logout/:id')
+  async logout(@Param('id', ParseIntPipe) userId: number): Promise<void> {
+    return await this.authService.logout(userId);
   }
 }

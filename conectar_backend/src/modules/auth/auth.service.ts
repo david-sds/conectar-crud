@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'generated/prisma';
+import { decrypt } from 'src/core/utils/encryption.utils';
 import { comparePassword, hashPassword } from 'src/core/utils/hash.utils';
 import {
   handlePrismaError,
@@ -43,6 +44,15 @@ export class AuthService {
 
     const tokens = await this._getTokensFromUserEntity(userEntity);
 
+    const isLastLoginUpdated = await this.authRepository.updateLastLogin(
+      userEntity.id,
+      tokens.refreshToken,
+    );
+
+    if (!isLastLoginUpdated) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
     return tokens;
   }
 
@@ -63,7 +73,26 @@ export class AuthService {
         throw new UnauthorizedException('User no longer exists');
       }
 
+      if (!userEntity.refreshToken) {
+        throw new UnauthorizedException('Refresh token missing');
+      }
+
+      const decryptedStoredToken = decrypt(userEntity.refreshToken);
+
+      if (decryptedStoredToken !== refreshToken) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
       const tokens = await this._getTokensFromUserEntity(userEntity);
+
+      const isLastLoginUpdated = await this.authRepository.updateLastLogin(
+        userEntity.id,
+        tokens.refreshToken,
+      );
+
+      if (!isLastLoginUpdated) {
+        throw new UnauthorizedException('Failed to update refresh token');
+      }
 
       return tokens;
     } catch (e) {
@@ -112,5 +141,9 @@ export class AuthService {
       }
       throw e;
     }
+  }
+
+  async logout(userId: number): Promise<void> {
+    await this.authRepository.clearRefreshToken(userId);
   }
 }
