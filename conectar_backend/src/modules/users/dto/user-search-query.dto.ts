@@ -1,6 +1,6 @@
+import { Role } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import { IsIn, IsOptional, IsString } from 'class-validator';
-import { Role } from 'generated/prisma';
 
 export class UserSearchQueryDto {
   @IsOptional()

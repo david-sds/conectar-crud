@@ -1,6 +1,6 @@
+import { Status } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import { IsIn, IsOptional, IsString } from 'class-validator';
-import { Status } from 'generated/prisma';
 
 export class ClientSearchQueryDto {
   @IsOptional()

@@ -11,8 +11,8 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
+import { Role } from '@prisma/client';
 import { Request } from 'express';
-import { Role } from 'generated/prisma';
 import { Roles } from 'src/core/decorators/roles.decorator';
 import { jwtDecode } from 'src/core/utils/jwt.utils';
 import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';

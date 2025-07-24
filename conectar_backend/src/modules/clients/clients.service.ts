@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Role } from 'generated/prisma';
+import { Role } from '@prisma/client';
 import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
 import {
   handlePrismaError,
