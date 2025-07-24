@@ -1,35 +1,102 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/core/database/prisma.service';
+import {
+  paginate,
+  paginateOutput,
+  PaginateOutput,
+} from 'src/core/utils/pagination/pagination.utils';
+import { QueryPaginationDto } from 'src/core/utils/pagination/query-pagination.dto';
 import { entityToClientDto } from './clients.mapper';
 import { ClientDto } from './dto/client.dto';
 import { clientInclude } from './include/client.include';
+
+const sortByTypes = [
+  'id',
+  'cnpj',
+  'name',
+  'legalName',
+  'status',
+  'conectaPlus',
+  'address',
+  'createdAt',
+  'updatedAt',
+];
 
 @Injectable()
 export class ClientsRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findAll(): Promise<ClientDto[]> {
-    const entities = await this.prismaService.client.findMany({
-      include: clientInclude,
-    });
+  async findAll(query: QueryPaginationDto): Promise<PaginateOutput<ClientDto>> {
+    if (!sortByTypes.includes(query.sortBy)) {
+      throw new BadRequestException(
+        `You can only sortBy [${sortByTypes.join(', ')}]`,
+      );
+    }
 
-    return entities.map((e) => entityToClientDto(e));
+    const sortBy: any = {};
+    switch (query.sortBy) {
+      default:
+        sortBy[query.sortBy] = query.order;
+        break;
+    }
+
+    const [clientEntities, total] = await Promise.all([
+      await this.prismaService.client.findMany({
+        ...paginate(query),
+        orderBy: sortBy,
+        include: clientInclude,
+      }),
+      await this.prismaService.client.count(),
+    ]);
+
+    return paginateOutput<ClientDto>(
+      clientEntities.map((e) => entityToClientDto(e)),
+      total,
+      query,
+    );
   }
 
-  async findAllByUser(userId: number) {
-    const entities = await this.prismaService.client.findMany({
-      where: {
-        userClients: {
-          some: {
-            userId: userId,
-          },
+  async findAllByUser(
+    userId: number,
+    query: QueryPaginationDto,
+  ): Promise<PaginateOutput<ClientDto>> {
+    const where: Prisma.ClientWhereInput = {
+      userClients: {
+        some: {
+          userId: userId,
         },
       },
-      include: clientInclude,
-    });
+    };
 
-    return entities.map((e) => entityToClientDto(e));
+    if (!sortByTypes.includes(query.sortBy)) {
+      throw new BadRequestException(
+        `You can only sortBy [${sortByTypes.join(', ')}]`,
+      );
+    }
+
+    const sortBy: any = {};
+    switch (query.sortBy) {
+      default:
+        sortBy[query.sortBy] = query.order;
+        break;
+    }
+
+    const [clientEntities, total] = await Promise.all([
+      await this.prismaService.client.findMany({
+        ...paginate(query),
+        where: where,
+        orderBy: sortBy,
+        include: clientInclude,
+      }),
+      await this.prismaService.client.count({ where }),
+    ]);
+
+    return paginateOutput<ClientDto>(
+      clientEntities.map((e) => entityToClientDto(e)),
+      total,
+      query,
+    );
   }
 
   async findOne(id: number): Promise<ClientDto | undefined> {

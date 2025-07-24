@@ -8,12 +8,15 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   Req,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { Role } from 'generated/prisma';
 import { Roles } from 'src/core/decorators/roles.decorator';
 import { jwtDecode } from 'src/core/utils/jwt.utils';
+import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
+import { QueryPaginationDto } from 'src/core/utils/pagination/query-pagination.dto';
 import { ClientsService } from './clients.service';
 import { ClientDto } from './dto/client.dto';
 import { ManageClientsDto } from './dto/manage-client.dto';
@@ -24,10 +27,13 @@ export class ClientsController {
 
   @Roles(Role.ADMIN, Role.USER)
   @Get()
-  findAll(@Req() req: Request): Promise<ClientDto[]> {
+  findAll(
+    @Req() req: Request,
+    @Query() query: QueryPaginationDto,
+  ): Promise<PaginateOutput<ClientDto>> {
     const tokenDecode = jwtDecode(req);
 
-    return this.clientsService.findAll(tokenDecode);
+    return this.clientsService.findAll(tokenDecode, query);
   }
 
   @Roles(Role.ADMIN, Role.USER)

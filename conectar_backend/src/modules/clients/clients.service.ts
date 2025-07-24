@@ -1,5 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Role } from 'generated/prisma';
+import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
+import { QueryPaginationDto } from 'src/core/utils/pagination/query-pagination.dto';
 import {
   handlePrismaError,
   isPrismaKnownError,
@@ -12,11 +14,14 @@ import { ClientDto } from './dto/client.dto';
 export class ClientsService {
   constructor(private readonly clientsRepository: ClientsRepository) {}
 
-  async findAll(tokenDecode: TokenDecodeDto): Promise<ClientDto[]> {
+  async findAll(
+    tokenDecode: TokenDecodeDto,
+    query: QueryPaginationDto,
+  ): Promise<PaginateOutput<ClientDto>> {
     if (tokenDecode.role === Role.ADMIN) {
-      return await this.clientsRepository.findAll();
+      return await this.clientsRepository.findAll(query);
     }
-    return this.clientsRepository.findAllByUser(tokenDecode.sub);
+    return this.clientsRepository.findAllByUser(tokenDecode.sub, query);
   }
 
   async findOne(id: number, tokenDecode: TokenDecodeDto): Promise<ClientDto> {
