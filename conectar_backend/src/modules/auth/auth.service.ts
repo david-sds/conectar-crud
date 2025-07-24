@@ -13,7 +13,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { TokenDecodeDto } from './dto/token-decode.dto';
 import { TokensDto } from './dto/tokens.dto';
 
-const accessTokenExpiration = 12;
+const accessTokenExpiration = 60 * 60 * 12;
 const refreshTokenExpiration = 60 * 60 * 24;
 
 @Injectable()

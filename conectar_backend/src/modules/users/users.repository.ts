@@ -1,16 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/core/database/prisma.service';
+import {
+  paginate,
+  PaginateOutput,
+  paginateOutput,
+} from 'src/core/utils/pagination/pagination.utils';
+import { QueryPaginationDto } from 'src/core/utils/pagination/query-pagination.dto';
 import { UserDto } from './dto/user.dto';
 import { entityToUserDto } from './users.mapper';
+
+const sortByTypes = ['id', 'name', 'email', 'role', 'createdAt', 'updatedAt'];
 
 @Injectable()
 export class UsersRepository {
   constructor(private prismaService: PrismaService) {}
 
-  async findAll(): Promise<UserDto[]> {
-    const entities = await this.prismaService.user.findMany();
+  async findAll(query: QueryPaginationDto): Promise<PaginateOutput<UserDto>> {
+    if (!sortByTypes.includes(query.sortBy)) {
+      throw new BadRequestException(
+        `You can only sortBy [${sortByTypes.join(', ')}]`,
+      );
+    }
 
-    return entities.map((e) => entityToUserDto(e));
+    const sortBy: any = {};
+    switch (query.sortBy) {
+      default:
+        sortBy[query.sortBy] = query.order;
+        break;
+    }
+
+    const [userEntities, total] = await Promise.all([
+      await this.prismaService.user.findMany({
+        ...paginate(query),
+        orderBy: sortBy,
+      }),
+      await this.prismaService.user.count(),
+    ]);
+
+    return paginateOutput<UserDto>(
+      userEntities.map((e) => entityToUserDto(e)),
+      total,
+      query,
+    );
   }
 
   async findOne(id: number): Promise<UserDto> {

@@ -8,9 +8,12 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { Role } from 'generated/prisma';
 import { Roles } from 'src/core/decorators/roles.decorator';
+import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
+import { QueryPaginationDto } from 'src/core/utils/pagination/query-pagination.dto';
 import { UserDto } from './dto/user.dto';
 import { UsersService } from './users.service';
 
@@ -20,8 +23,10 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  findAll(): Promise<UserDto[]> {
-    return this.usersService.findAll();
+  findAll(
+    @Query() query: QueryPaginationDto,
+  ): Promise<PaginateOutput<UserDto>> {
+    return this.usersService.findAll(query);
   }
 
   @Get(':id')
