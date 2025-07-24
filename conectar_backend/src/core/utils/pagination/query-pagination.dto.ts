@@ -18,7 +18,4 @@ export class QueryPaginationDto {
   @IsOptional()
   @IsEnum(Order)
   order: Order = Order.DESC;
-
-  @IsOptional()
-  search: string = '';
 }

@@ -1,13 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Role } from 'generated/prisma';
 import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
-import { QueryPaginationDto } from 'src/core/utils/pagination/query-pagination.dto';
 import {
   handlePrismaError,
   isPrismaKnownError,
 } from 'src/core/utils/prisma-error-handler.util';
 import { TokenDecodeDto } from '../auth/dto/token-decode.dto';
 import { ClientsRepository } from './clients.repository';
+import { ClientQueryDto } from './dto/client-query.dto';
 import { ClientDto } from './dto/client.dto';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class ClientsService {
 
   async findAll(
     tokenDecode: TokenDecodeDto,
-    query: QueryPaginationDto,
+    query: ClientQueryDto,
   ): Promise<PaginateOutput<ClientDto>> {
     if (tokenDecode.role === Role.ADMIN) {
       return await this.clientsRepository.findAll(query);
@@ -91,17 +91,31 @@ export class ClientsService {
   }
 
   async addClientsToUser(userId: number, clientIds: number[]): Promise<number> {
-    return await this.clientsRepository.addClientsToUser(userId, clientIds);
+    try {
+      return await this.clientsRepository.addClientsToUser(userId, clientIds);
+    } catch (e) {
+      if (isPrismaKnownError(e)) {
+        handlePrismaError(e);
+      }
+      throw e;
+    }
   }
 
   async removeClientsFromUser(
     userId: number,
     clientIds: number[],
   ): Promise<number> {
-    return await this.clientsRepository.removeClientsFromUser(
-      userId,
-      clientIds,
-    );
+    try {
+      return await this.clientsRepository.removeClientsFromUser(
+        userId,
+        clientIds,
+      );
+    } catch (e) {
+      if (isPrismaKnownError(e)) {
+        handlePrismaError(e);
+      }
+      throw e;
+    }
   }
 
   async canEditClient(

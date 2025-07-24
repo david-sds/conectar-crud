@@ -6,8 +6,8 @@ import {
   paginateOutput,
   PaginateOutput,
 } from 'src/core/utils/pagination/pagination.utils';
-import { QueryPaginationDto } from 'src/core/utils/pagination/query-pagination.dto';
 import { entityToClientDto } from './clients.mapper';
+import { ClientQueryDto } from './dto/client-query.dto';
 import { ClientDto } from './dto/client.dto';
 import { clientInclude } from './include/client.include';
 
@@ -27,12 +27,14 @@ const sortByTypes = [
 export class ClientsRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findAll(query: QueryPaginationDto): Promise<PaginateOutput<ClientDto>> {
+  async findAll(query: ClientQueryDto): Promise<PaginateOutput<ClientDto>> {
     if (!sortByTypes.includes(query.sortBy)) {
       throw new BadRequestException(
         `You can only sortBy [${sortByTypes.join(', ')}]`,
       );
     }
+
+    const where = this._clientFiltersWhere(query);
 
     const sortBy: any = {};
     switch (query.sortBy) {
@@ -44,10 +46,11 @@ export class ClientsRepository {
     const [clientEntities, total] = await Promise.all([
       await this.prismaService.client.findMany({
         ...paginate(query),
+        where: where,
         orderBy: sortBy,
         include: clientInclude,
       }),
-      await this.prismaService.client.count(),
+      await this.prismaService.client.count({ where }),
     ]);
 
     return paginateOutput<ClientDto>(
@@ -59,7 +62,7 @@ export class ClientsRepository {
 
   async findAllByUser(
     userId: number,
-    query: QueryPaginationDto,
+    query: ClientQueryDto,
   ): Promise<PaginateOutput<ClientDto>> {
     const where: Prisma.ClientWhereInput = {
       userClients: {
@@ -67,6 +70,7 @@ export class ClientsRepository {
           userId: userId,
         },
       },
+      ...this._clientFiltersWhere(query),
     };
 
     if (!sortByTypes.includes(query.sortBy)) {
@@ -97,6 +101,45 @@ export class ClientsRepository {
       total,
       query,
     );
+  }
+
+  _clientFiltersWhere(query: ClientQueryDto): Prisma.ClientWhereInput {
+    const where = { AND: [] as Prisma.ClientWhereInput[] };
+
+    if (query.nome) {
+      where.AND.push({
+        name: {
+          contains: query.nome,
+        },
+      });
+    }
+    if (query.cnpj) {
+      const cnpjNumbers = query.cnpj.replace(/\D/g, '');
+      where.AND.push({
+        cnpj: {
+          contains: cnpjNumbers,
+        },
+      });
+    }
+    if (query.conectaPlus) {
+      const isConectaPlus =
+        query.conectaPlus === 'true'
+          ? true
+          : query.conectaPlus === 'false'
+            ? false
+            : null;
+
+      if (isConectaPlus !== null) {
+        where.AND.push({ conectaPlus: isConectaPlus });
+      }
+    }
+    if (query.status) {
+      where.AND.push({
+        status: query.status,
+      });
+    }
+
+    return where;
   }
 
   async findOne(id: number): Promise<ClientDto | undefined> {

@@ -16,8 +16,8 @@ import { Role } from 'generated/prisma';
 import { Roles } from 'src/core/decorators/roles.decorator';
 import { jwtDecode } from 'src/core/utils/jwt.utils';
 import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
-import { QueryPaginationDto } from 'src/core/utils/pagination/query-pagination.dto';
 import { ClientsService } from './clients.service';
+import { ClientQueryDto } from './dto/client-query.dto';
 import { ClientDto } from './dto/client.dto';
 import { ManageClientsDto } from './dto/manage-client.dto';
 
@@ -29,7 +29,7 @@ export class ClientsController {
   @Get()
   findAll(
     @Req() req: Request,
-    @Query() query: QueryPaginationDto,
+    @Query() query: ClientQueryDto,
   ): Promise<PaginateOutput<ClientDto>> {
     const tokenDecode = jwtDecode(req);
 

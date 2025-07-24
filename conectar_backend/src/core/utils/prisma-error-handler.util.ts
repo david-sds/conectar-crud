@@ -11,6 +11,7 @@ export function handlePrismaError(e: Prisma.PrismaClientKnownRequestError) {
       throw new NotFoundException(
         `${e.meta?.modelName} with this ${e.meta?.target} already exists`,
       );
+
     default:
       throw e;
   }
