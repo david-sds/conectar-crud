@@ -9,19 +9,22 @@ import {
   Patch,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { Role } from 'generated/prisma';
 import { Roles } from 'src/core/decorators/roles.decorator';
+import { jwtDecode } from 'src/core/utils/jwt.utils';
 import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
 import { QueryPaginationDto } from 'src/core/utils/pagination/query-pagination.dto';
 import { UserDto } from './dto/user.dto';
 import { UsersService } from './users.service';
 
-@Roles(Role.ADMIN)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Roles(Role.ADMIN)
   @Get()
   findAll(
     @Query() query: QueryPaginationDto,
@@ -29,16 +32,26 @@ export class UsersController {
     return this.usersService.findAll(query);
   }
 
+  @Roles(Role.ADMIN, Role.USER)
+  @Get('me')
+  findMe(@Req() req: Request): Promise<UserDto> {
+    const tokenDecodeDto = jwtDecode(req);
+    return this.usersService.findOne(tokenDecodeDto.sub);
+  }
+
+  @Roles(Role.ADMIN)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<UserDto> {
     return this.usersService.findOne(id);
   }
 
+  @Roles(Role.ADMIN)
   @Post()
   create(@Body() user: UserDto): Promise<UserDto> {
     return this.usersService.create(user);
   }
 
+  @Roles(Role.ADMIN)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -51,6 +64,7 @@ export class UsersController {
     return this.usersService.update(id, user);
   }
 
+  @Roles(Role.ADMIN)
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id: number): Promise<UserDto> {
     return this.usersService.delete(id);
