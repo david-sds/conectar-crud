@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Prisma } from 'generated/prisma';
 import { PrismaService } from 'src/core/database/prisma.service';
 import {
   paginate,
   PaginateOutput,
   paginateOutput,
 } from 'src/core/utils/pagination/pagination.utils';
-import { QueryPaginationDto } from 'src/core/utils/pagination/query-pagination.dto';
+import { UserQueryDto } from './dto/user-query.dto';
 import { UserDto } from './dto/user.dto';
 import { entityToUserDto } from './users.mapper';
 
@@ -15,12 +16,14 @@ const sortByTypes = ['id', 'name', 'email', 'role', 'createdAt', 'updatedAt'];
 export class UsersRepository {
   constructor(private prismaService: PrismaService) {}
 
-  async findAll(query: QueryPaginationDto): Promise<PaginateOutput<UserDto>> {
+  async findAll(query: UserQueryDto): Promise<PaginateOutput<UserDto>> {
     if (!sortByTypes.includes(query.sortBy)) {
       throw new BadRequestException(
         `You can only sortBy [${sortByTypes.join(', ')}]`,
       );
     }
+
+    const where = this._userFiltersWhere(query);
 
     const sortBy: any = {};
     switch (query.sortBy) {
@@ -32,9 +35,10 @@ export class UsersRepository {
     const [userEntities, total] = await Promise.all([
       await this.prismaService.user.findMany({
         ...paginate(query),
+        where: where,
         orderBy: sortBy,
       }),
-      await this.prismaService.user.count(),
+      await this.prismaService.user.count({ where }),
     ]);
 
     return paginateOutput<UserDto>(
@@ -42,6 +46,34 @@ export class UsersRepository {
       total,
       query,
     );
+  }
+
+  _userFiltersWhere(query: UserQueryDto): Prisma.UserWhereInput {
+    const where = { AND: [] as Prisma.UserWhereInput[] };
+
+    if (query.nome) {
+      where.AND.push({
+        name: {
+          contains: query.nome,
+          mode: 'insensitive',
+        },
+      });
+    }
+    if (query.email) {
+      where.AND.push({
+        email: {
+          contains: query.email,
+          mode: 'insensitive',
+        },
+      });
+    }
+    if (query.role) {
+      where.AND.push({
+        role: query.role,
+      });
+    }
+
+    return where;
   }
 
   async findOne(id: number): Promise<UserDto> {

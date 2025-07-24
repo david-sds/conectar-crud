@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
-import { QueryPaginationDto } from 'src/core/utils/pagination/query-pagination.dto';
 import {
   handlePrismaError,
   isPrismaKnownError,
 } from 'src/core/utils/prisma-error-handler.util';
+import { UserQueryDto } from './dto/user-query.dto';
 import { UserDto } from './dto/user.dto';
 import { UsersRepository } from './users.repository';
 
@@ -12,7 +12,7 @@ import { UsersRepository } from './users.repository';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async findAll(query: QueryPaginationDto): Promise<PaginateOutput<UserDto>> {
+  async findAll(query: UserQueryDto): Promise<PaginateOutput<UserDto>> {
     return await this.usersRepository.findAll(query);
   }
 

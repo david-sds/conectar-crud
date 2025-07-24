@@ -110,6 +110,7 @@ export class ClientsRepository {
       where.AND.push({
         name: {
           contains: query.nome,
+          mode: 'insensitive',
         },
       });
     }

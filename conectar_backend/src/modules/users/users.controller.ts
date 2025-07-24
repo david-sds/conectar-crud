@@ -16,7 +16,7 @@ import { Role } from 'generated/prisma';
 import { Roles } from 'src/core/decorators/roles.decorator';
 import { jwtDecode } from 'src/core/utils/jwt.utils';
 import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
-import { QueryPaginationDto } from 'src/core/utils/pagination/query-pagination.dto';
+import { UserQueryDto } from './dto/user-query.dto';
 import { UserDto } from './dto/user.dto';
 import { UsersService } from './users.service';
 
@@ -26,9 +26,7 @@ export class UsersController {
 
   @Roles(Role.ADMIN)
   @Get()
-  findAll(
-    @Query() query: QueryPaginationDto,
-  ): Promise<PaginateOutput<UserDto>> {
+  findAll(@Query() query: UserQueryDto): Promise<PaginateOutput<UserDto>> {
     return this.usersService.findAll(query);
   }
 
