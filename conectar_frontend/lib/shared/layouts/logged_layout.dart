@@ -6,13 +6,49 @@ import 'package:go_router/go_router.dart';
 
 final _authViewmodel = AuthViewmodel();
 
-class LoggedLayout extends StatelessWidget {
+enum AppBarTabs {
+  users(
+    label: 'Usuarios',
+    route: Routes.users,
+  ),
+  clients(
+    label: 'Clientes',
+    route: Routes.clients,
+  );
+
+  const AppBarTabs({
+    required this.label,
+    required this.route,
+  });
+
+  final String label;
+  final Routes route;
+}
+
+class LoggedLayout extends StatefulWidget {
   const LoggedLayout({
     required this.child,
     super.key,
   });
 
   final Widget child;
+
+  @override
+  State<LoggedLayout> createState() => _LoggedLayoutState();
+}
+
+class _LoggedLayoutState extends State<LoggedLayout>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    _tabController = TabController(
+      length: AppBarTabs.values.length,
+      vsync: this,
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +59,14 @@ class LoggedLayout extends StatelessWidget {
           kToolbarHeight,
         ),
         child: CustomAppBar(
+          tabBar: TabBar(
+            onTap: (index) {
+              final tab = AppBarTabs.values[index];
+              GoRouter.of(context).pushNamed(tab.route.name);
+            },
+            controller: _tabController,
+            tabs: AppBarTabs.values.map((e) => Tab(text: e.label)).toList(),
+          ),
           onLogout: () async {
             final isLoggedOut = await _authViewmodel.logout();
 
@@ -32,7 +76,7 @@ class LoggedLayout extends StatelessWidget {
           },
         ),
       ),
-      body: child,
+      body: widget.child,
     );
   }
 }

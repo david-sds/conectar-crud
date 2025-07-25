@@ -18,6 +18,12 @@ class TokenService {
     return prefs.getString(_accessTokenKey);
   }
 
+  Future<bool> isAccessToken() async {
+    final accessToken = await getAccessToken();
+
+    return accessToken != null;
+  }
+
   Future<String?> getRefreshToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_refreshTokenKey);

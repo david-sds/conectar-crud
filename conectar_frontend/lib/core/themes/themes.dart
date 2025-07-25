@@ -7,6 +7,10 @@ class Themes {
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.primary,
       ),
+      tabBarTheme: TabBarThemeData(
+        labelColor: colorScheme.onPrimary,
+        unselectedLabelColor: colorScheme.onPrimary,
+      ),
       inputDecorationTheme: InputDecorationTheme(
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(globalBorderRadius)),
@@ -70,6 +74,7 @@ const Color lightGreen = Color(0xFFE1F5F0);
 
 final _lightColorScheme = ColorScheme.light(
   primary: primaryGreen,
+  onPrimary: Colors.white,
   primaryContainer: lightGreen,
   secondary: mediumGreen,
   outlineVariant: Colors.grey.shade200,
@@ -77,6 +82,7 @@ final _lightColorScheme = ColorScheme.light(
 
 final _darkColorScheme = ColorScheme.dark(
   primary: primaryGreen,
+  onPrimary: Colors.white,
   primaryContainer: lightGreen,
   secondary: mediumGreen,
   outlineVariant: Colors.grey.shade200,

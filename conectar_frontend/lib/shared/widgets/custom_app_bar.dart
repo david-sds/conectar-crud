@@ -3,24 +3,37 @@ import 'package:flutter_svg/svg.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({
+    required this.tabBar,
     this.onLogout,
     super.key,
   });
 
+  final Widget tabBar;
   final Future<void> Function()? onLogout;
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: SizedBox(
-        width: 100,
-        child: SvgPicture.asset(
-          'assets/images/logo.svg',
-          colorFilter: const ColorFilter.mode(
-            Colors.white,
-            BlendMode.srcIn,
+      title: Row(
+        children: [
+          SizedBox(
+            width: 100,
+            child: SvgPicture.asset(
+              'assets/images/logo.svg',
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
+            ),
           ),
-        ),
+          const SizedBox(
+            width: 18,
+          ),
+          Flexible(
+            child: tabBar,
+          ),
+          const Spacer()
+        ],
       ),
       actions: [
         IconButton(

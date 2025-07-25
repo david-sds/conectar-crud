@@ -7,9 +7,13 @@ enum Routes {
     name: 'login',
     path: '/login',
   ),
-  home(
-    name: 'home',
-    path: '/home',
+  clients(
+    name: 'clients',
+    path: '/clients',
+  ),
+  users(
+    name: 'users',
+    path: '/users',
   );
 
   const Routes({
