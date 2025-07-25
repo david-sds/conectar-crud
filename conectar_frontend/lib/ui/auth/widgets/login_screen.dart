@@ -39,10 +39,22 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Card(
             child: LoginForm(
               onSubmit: (credentials) async {
-                final isLoggedOut = await _authViewmodel.login(credentials);
+                final isLoggedIn = await _authViewmodel.login(credentials);
 
-                if (isLoggedOut && context.mounted) {
+                if (!context.mounted) {
+                  return;
+                }
+
+                if (isLoggedIn) {
                   GoRouter.of(context).goNamed(Routes.home.name);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Credenciais inválidas',
+                      ),
+                    ),
+                  );
                 }
               },
             ),

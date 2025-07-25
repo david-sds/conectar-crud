@@ -2,6 +2,7 @@ import 'package:conectar_frontend/domain/models/credentials_model.dart';
 import 'package:conectar_frontend/shared/widgets/custom_input.dart';
 import 'package:conectar_frontend/ui/auth/widgets/login_form/login_form_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:validators/validators.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({
@@ -39,13 +40,28 @@ class _LoginFormState extends State<LoginForm> {
             CustomInput(
               labelText: 'Email',
               onChanged: ctrl.setEmail,
+              validator: (value) {
+                if (value == null || value == '') {
+                  return 'Obrigatório';
+                }
+                if (!isEmail(value)) {
+                  return 'Email inválido';
+                }
+                return null;
+              },
             ),
             const SizedBox(
               height: 8,
             ),
-            CustomInput(
+            CustomInput.password(
               labelText: 'Senha',
               onChanged: ctrl.setPassword,
+              validator: (value) {
+                if (value == null || value == '') {
+                  return 'Obrigatório';
+                }
+                return null;
+              },
             ),
             const SizedBox(
               height: 8,

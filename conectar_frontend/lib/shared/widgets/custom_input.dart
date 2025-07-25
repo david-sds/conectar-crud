@@ -1,29 +1,101 @@
+import 'package:conectar_frontend/core/themes/themes.dart';
 import 'package:flutter/material.dart';
 
-class CustomInput extends StatelessWidget {
+enum InputType {
+  text,
+  password,
+}
+
+class CustomInput extends StatefulWidget {
   const CustomInput({
     this.labelText,
     this.onChanged,
     this.validator,
+    this.suffixIcon,
     super.key,
-  });
+  }) : type = InputType.text;
+
+  const CustomInput.password({
+    this.labelText,
+    this.onChanged,
+    this.validator,
+    this.suffixIcon,
+    super.key,
+  }) : type = InputType.password;
 
   final String? labelText;
-  final void Function(String)? onChanged;
-  final String? Function(String?)? validator;
+  final void Function(String value)? onChanged;
+  final String? Function(String? value)? validator;
+  final InputType type;
+  final Widget? suffixIcon;
+
+  @override
+  State<CustomInput> createState() => _CustomInputState();
+}
+
+class _CustomInputState extends State<CustomInput> {
+  late bool _obscureText;
+
+  @override
+  void initState() {
+    _obscureText = widget.type == InputType.password;
+    super.initState();
+  }
+
+  Widget? getSuffixIcon() {
+    if (widget.suffixIcon != null) {
+      return widget.suffixIcon;
+    }
+
+    if (widget.type == InputType.password) {
+      return SizedBox(
+        height: 48,
+        child: FilledButton(
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+            shape: RoundedRectangleBorder(
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(globalBorderRadius),
+                bottomRight: Radius.circular(globalBorderRadius),
+              ),
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.primary,
+                width: 1,
+                style: BorderStyle.solid,
+              ),
+            ),
+          ),
+          child: Icon(
+            !_obscureText
+                ? Icons.visibility_off_outlined
+                : Icons.visibility_outlined,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      );
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (labelText != null) Text(labelText ?? ''),
+        if (widget.labelText != null) Text(widget.labelText ?? ''),
         TextFormField(
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             helperText: " ",
+            suffixIcon: getSuffixIcon(),
           ),
-          onChanged: onChanged,
-          validator: validator,
+          onChanged: widget.onChanged,
+          validator: widget.validator,
+          obscureText: _obscureText,
         ),
       ],
     );

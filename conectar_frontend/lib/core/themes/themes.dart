@@ -1,38 +1,66 @@
 import 'package:flutter/material.dart';
 
 class Themes {
-  static ThemeData light() {
-    const colorScheme = _lightColorScheme;
-
+  static _baseThemeData(ColorScheme colorScheme) {
     return ThemeData(
-      brightness: Brightness.light,
       colorScheme: colorScheme,
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.primary,
       ),
-      inputDecorationTheme: const InputDecorationTheme(
-        border: OutlineInputBorder(),
-        enabledBorder: OutlineInputBorder(),
-        focusedBorder: OutlineInputBorder(),
+      inputDecorationTheme: InputDecorationTheme(
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(globalBorderRadius)),
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(globalBorderRadius)),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(globalBorderRadius)),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius:
+              const BorderRadius.all(Radius.circular(globalBorderRadius)),
+          borderSide: BorderSide(
+            color: colorScheme.error,
+          ),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(globalBorderRadius),
+            ),
+          ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: ButtonStyle(
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(globalBorderRadius),
+            ),
+          ),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(globalBorderRadius),
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  static ThemeData dark() {
-    const colorScheme = _darkColorScheme;
+  static ThemeData light() {
+    return _baseThemeData(_lightColorScheme);
+  }
 
-    return ThemeData(
-      brightness: Brightness.dark,
-      colorScheme: colorScheme,
-      appBarTheme: AppBarTheme(
-        backgroundColor: colorScheme.primary,
-      ),
-      inputDecorationTheme: const InputDecorationTheme(
-        border: OutlineInputBorder(),
-        enabledBorder: OutlineInputBorder(),
-        focusedBorder: OutlineInputBorder(),
-      ),
-    );
+  static ThemeData dark() {
+    return _baseThemeData(_darkColorScheme);
   }
 }
 
@@ -40,14 +68,18 @@ const Color primaryGreen = Color(0xFF19AF78);
 const Color mediumGreen = Color(0xFF8CD7B9);
 const Color lightGreen = Color(0xFFE1F5F0);
 
-const _lightColorScheme = ColorScheme.light(
+final _lightColorScheme = ColorScheme.light(
   primary: primaryGreen,
   primaryContainer: lightGreen,
   secondary: mediumGreen,
+  outlineVariant: Colors.grey.shade200,
 );
 
-const _darkColorScheme = ColorScheme.dark(
+final _darkColorScheme = ColorScheme.dark(
   primary: primaryGreen,
   primaryContainer: lightGreen,
   secondary: mediumGreen,
+  outlineVariant: Colors.grey.shade200,
 );
+
+const globalBorderRadius = 8.0;
