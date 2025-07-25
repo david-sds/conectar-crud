@@ -1,8 +1,16 @@
+import 'package:conectar_frontend/core/routing/routes.dart';
+import 'package:conectar_frontend/ui/auth/viewmodel/auth_viewmodel.dart';
+import 'package:conectar_frontend/ui/auth/widgets/login_form/login_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+
+final _authViewmodel = AuthViewmodel();
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({
+    super.key,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -12,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
           width: 200,
@@ -27,31 +37,14 @@ class _LoginScreenState extends State<LoginScreen> {
         SizedBox(
           width: 500,
           child: Card(
-            child: Form(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const TextField(
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const TextField(
-                      decoration: InputDecoration(
-                        labelText: 'Senha',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    FilledButton(
-                      child: const Text('Entrar'),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ),
+            child: LoginForm(
+              onSubmit: (credentials) async {
+                final isLoggedOut = await _authViewmodel.login(credentials);
+
+                if (isLoggedOut && context.mounted) {
+                  GoRouter.of(context).goNamed(Routes.home.name);
+                }
+              },
             ),
           ),
         )

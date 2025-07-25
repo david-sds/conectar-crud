@@ -5,11 +5,17 @@ class Themes {
     const colorScheme = _lightColorScheme;
 
     return ThemeData(
-        brightness: Brightness.light,
-        colorScheme: colorScheme,
-        appBarTheme: AppBarTheme(
-          backgroundColor: colorScheme.primary,
-        ));
+      brightness: Brightness.light,
+      colorScheme: colorScheme,
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.primary,
+      ),
+      inputDecorationTheme: const InputDecorationTheme(
+        border: OutlineInputBorder(),
+        enabledBorder: OutlineInputBorder(),
+        focusedBorder: OutlineInputBorder(),
+      ),
+    );
   }
 
   static ThemeData dark() {
@@ -20,6 +26,11 @@ class Themes {
       colorScheme: colorScheme,
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.primary,
+      ),
+      inputDecorationTheme: const InputDecorationTheme(
+        border: OutlineInputBorder(),
+        enabledBorder: OutlineInputBorder(),
+        focusedBorder: OutlineInputBorder(),
       ),
     );
   }
