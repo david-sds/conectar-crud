@@ -13,7 +13,6 @@ final baseOptions = BaseOptions(
 
 class HttpService {
   final Dio dio;
-  final retryDio = Dio(baseOptions.copyWith())..interceptors.clear();
   final AuthRepository _authRepository;
 
   HttpService()
@@ -54,6 +53,9 @@ class HttpService {
                   'Authorization': 'Bearer $newToken'
                 },
               );
+
+              final retryDio = Dio(baseOptions.copyWith())
+                ..interceptors.clear();
 
               final cloned = await retryDio.request(
                 e.requestOptions.path,

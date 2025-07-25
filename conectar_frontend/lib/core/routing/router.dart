@@ -52,6 +52,11 @@ final _notLoggedStack = ShellRoute(
 
 final router = GoRouter(
   routes: [
+    GoRoute(
+      name: Routes.initial.name,
+      path: Routes.initial.path,
+      redirect: (context, state) => Routes.clients.path,
+    ),
     _loggedStack,
     _notLoggedStack,
   ],

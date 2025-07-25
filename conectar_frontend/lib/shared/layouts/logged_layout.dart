@@ -60,6 +60,7 @@ class _LoggedLayoutState extends State<LoggedLayout>
         ),
         child: CustomAppBar(
           tabBar: TabBar(
+            dividerColor: Colors.transparent,
             onTap: (index) {
               final tab = AppBarTabs.values[index];
               GoRouter.of(context).pushNamed(tab.route.name);

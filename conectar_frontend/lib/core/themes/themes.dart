@@ -43,11 +43,21 @@ class Themes {
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(globalBorderRadius),
+              side: BorderSide(color: colorScheme.primary),
             ),
           ),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(globalBorderRadius),
+            ),
+          ),
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
         style: ButtonStyle(
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
@@ -71,6 +81,7 @@ class Themes {
 const Color primaryGreen = Color(0xFF19AF78);
 const Color mediumGreen = Color(0xFF8CD7B9);
 const Color lightGreen = Color(0xFFE1F5F0);
+const Color background = Color(0xFFFAFAFA);
 
 final _lightColorScheme = ColorScheme.light(
   primary: primaryGreen,
@@ -78,6 +89,9 @@ final _lightColorScheme = ColorScheme.light(
   primaryContainer: lightGreen,
   secondary: mediumGreen,
   outlineVariant: Colors.grey.shade200,
+  surface: background,
+  onSurface: Colors.black,
+  surfaceBright: Colors.white,
 );
 
 final _darkColorScheme = ColorScheme.dark(
