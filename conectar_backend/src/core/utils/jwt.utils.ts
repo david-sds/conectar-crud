@@ -22,7 +22,7 @@ function verifyToken(token: string, secret: string) {
   try {
     return jwt.verify(token, secret);
   } catch (err) {
-    throw new Error(`Invalid or expired token ${err}`);
+    throw new UnauthorizedException(`Invalid or expired token ${err}`);
   }
 }
 

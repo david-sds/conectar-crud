@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class refreshTokenDto {
+export class RefreshTokenDto {
   @IsString()
   refreshToken: string;
 }

@@ -5,7 +5,7 @@ import { jwtDecode } from 'src/core/utils/jwt.utils';
 import { UserDto } from '../users/dto/user.dto';
 import { AuthService } from './auth.service';
 import { CredentialsDto } from './dto/credentials.dto';
-import { refreshTokenDto } from './dto/refresh-token.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { TokensDto } from './dto/tokens.dto';
 
@@ -25,7 +25,7 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(@Body() refreshTokenDto: refreshTokenDto): Promise<TokensDto> {
+  async refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<TokensDto> {
     return await this.authService.refreshTokens(refreshTokenDto.refreshToken);
   }
 
