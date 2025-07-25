@@ -1,4 +1,4 @@
-import 'package:conectar_frontend/domain/models/credentials_model.dart';
+import 'package:conectar_frontend/domain/models/credentials/credentials_model.dart';
 import 'package:conectar_frontend/shared/widgets/custom_input.dart';
 import 'package:conectar_frontend/ui/auth/widgets/login_form/login_form_controller.dart';
 import 'package:flutter/material.dart';

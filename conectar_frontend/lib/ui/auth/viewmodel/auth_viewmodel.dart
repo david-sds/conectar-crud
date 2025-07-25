@@ -1,10 +1,10 @@
 import 'package:conectar_frontend/data/repositories/auth_repository.dart';
-import 'package:conectar_frontend/domain/models/credentials_model.dart';
+import 'package:conectar_frontend/domain/models/credentials/credentials_model.dart';
 import 'package:flutter/material.dart';
 
-final authRepository = AuthRepository();
-
 class AuthViewmodel extends ChangeNotifier {
+  final authRepository = AuthRepository();
+
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
   void setIsLoggedIn(bool value) {

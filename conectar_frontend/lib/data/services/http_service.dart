@@ -1,18 +1,24 @@
+import 'package:conectar_frontend/data/repositories/auth_repository.dart';
 import 'package:conectar_frontend/data/services/token_service.dart';
 import 'package:dio/dio.dart';
 
 final _tokenService = TokenService();
 
+final baseOptions = BaseOptions(
+  baseUrl: 'http://localhost:3000/api',
+  connectTimeout: const Duration(seconds: 10),
+  receiveTimeout: const Duration(seconds: 10),
+  headers: {'Content-Type': 'application/json'},
+);
+
 class HttpService {
   final Dio dio;
+  final retryDio = Dio(baseOptions.copyWith())..interceptors.clear();
+  final AuthRepository _authRepository;
 
   HttpService()
-      : dio = Dio(BaseOptions(
-          baseUrl: 'http://localhost:3000/api',
-          connectTimeout: const Duration(seconds: 10),
-          receiveTimeout: const Duration(seconds: 10),
-          headers: {'Content-Type': 'application/json'},
-        )) {
+      : _authRepository = AuthRepository(),
+        dio = Dio(baseOptions) {
     _setupInterceptors();
   }
 
@@ -26,8 +32,42 @@ class HttpService {
           }
           handler.next(options);
         },
-        onError: (e, handler) {
-          handler.next(e);
+        onError: (e, handler) async {
+          final isAuthError =
+              e.response?.statusCode == 401 || e.response?.statusCode == 403;
+
+          if (!isAuthError) {
+            handler.next(e);
+          }
+
+          final isRefreshed = await _authRepository.refresh();
+
+          if (isRefreshed) {
+            final newToken = await _tokenService.getAccessToken();
+
+            try {
+              final options = Options(
+                method: e.requestOptions.method,
+                extra: e.requestOptions.extra,
+                headers: {
+                  ...e.requestOptions.headers,
+                  'Authorization': 'Bearer $newToken'
+                },
+              );
+
+              final cloned = await retryDio.request(
+                e.requestOptions.path,
+                data: e.requestOptions.data,
+                queryParameters: e.requestOptions.queryParameters,
+                options: options,
+              );
+              return handler.resolve(cloned);
+            } catch (e) {
+              await _authRepository.logout();
+
+              return handler.reject(e as DioException);
+            }
+          }
         },
       ),
     );
