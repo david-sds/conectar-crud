@@ -77,7 +77,9 @@ class _LoggedLayoutState extends State<LoggedLayout>
           },
         ),
       ),
-      body: widget.child,
+      body: SingleChildScrollView(
+        child: widget.child,
+      ),
     );
   }
 }

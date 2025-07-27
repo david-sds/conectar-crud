@@ -27,6 +27,13 @@ class ClientsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> changePage(int pageNumber) async {
+    _paginationInput = _paginationInput.copyWith(
+      page: pageNumber,
+    );
+    await load();
+  }
+
   ClientFilters _clientFilters = const ClientFilters();
 
   String? get nameFilter => _clientFilters.nome;

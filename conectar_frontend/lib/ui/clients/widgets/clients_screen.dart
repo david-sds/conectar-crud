@@ -1,6 +1,7 @@
 import 'package:conectar_frontend/domain/models/client_status/client_status_model.dart';
 import 'package:conectar_frontend/shared/widgets/custom_dropdown.dart';
 import 'package:conectar_frontend/shared/widgets/custom_input.dart';
+import 'package:conectar_frontend/shared/widgets/custom_pagination.dart';
 import 'package:conectar_frontend/ui/clients/viewmodel/clients_viewmodel.dart';
 import 'package:flutter/material.dart';
 
@@ -103,11 +104,28 @@ class _ClientsScreenState extends State<ClientsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const ListTile(
-                title: Text('Clientes'),
-                subtitle: Text(
-                  'Selecione um usuário para editar suas informaçôes.',
-                ),
+              Row(
+                children: [
+                  const Flexible(
+                    child: ListTile(
+                      title: Text('Clientes'),
+                      subtitle: Text(
+                        'Selecione um usuário para editar suas informaçôes.',
+                      ),
+                    ),
+                  ),
+                  ListenableBuilder(
+                    listenable: _viewmodel,
+                    builder: (context, widget) {
+                      return CustomPagination(
+                        paginationOutput: _viewmodel.paginationOutput,
+                        onChangePage: (pageNumber) async {
+                          await _viewmodel.changePage(pageNumber);
+                        },
+                      );
+                    },
+                  ),
+                ],
               ),
               OutlinedButton(
                 onPressed: () {},
