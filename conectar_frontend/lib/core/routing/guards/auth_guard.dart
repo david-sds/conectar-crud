@@ -13,6 +13,6 @@ class AuthGuard {
 
   Future<String?> notLogged(BuildContext context, GoRouterState state) async {
     final isAccessToken = await _tokenService.isAccessToken();
-    return !isAccessToken ? null : Routes.users.path;
+    return !isAccessToken ? null : Routes.clients.path;
   }
 }

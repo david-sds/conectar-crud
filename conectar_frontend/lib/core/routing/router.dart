@@ -35,6 +35,14 @@ final _loggedStack = ShellRoute(
       },
     ),
     GoRoute(
+      path: Routes.createClient.path,
+      name: Routes.createClient.name,
+      redirect: _guards.authGuard.logged,
+      builder: (context, state) {
+        return const CreateClientScreen();
+      },
+    ),
+    GoRoute(
       path: Routes.clients.detailPath,
       name: Routes.clients.detailName,
       redirect: _guards.authGuard.logged,
@@ -46,14 +54,6 @@ final _loggedStack = ShellRoute(
         return EditClientScreen(
           clientId: clientId,
         );
-      },
-    ),
-    GoRoute(
-      path: Routes.createClient.path,
-      name: Routes.createClient.name,
-      redirect: _guards.authGuard.logged,
-      builder: (context, state) {
-        return const CreateClientScreen();
       },
     ),
   ],

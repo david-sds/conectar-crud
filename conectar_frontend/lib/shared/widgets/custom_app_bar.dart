@@ -32,7 +32,6 @@ class CustomAppBar extends StatelessWidget {
           Flexible(
             child: tabBar,
           ),
-          const Spacer()
         ],
       ),
       actions: [

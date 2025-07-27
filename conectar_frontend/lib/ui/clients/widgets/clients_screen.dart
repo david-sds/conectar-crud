@@ -109,18 +109,17 @@ class _ClientsScreenState extends State<ClientsScreen> {
         ),
         Card(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const ListTile(
+                title: Text('Clientes'),
+                subtitle: Text(
+                  'Selecione um usuário para editar suas informaçôes.',
+                ),
+              ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Flexible(
-                    child: ListTile(
-                      title: Text('Clientes'),
-                      subtitle: Text(
-                        'Selecione um usuário para editar suas informaçôes.',
-                      ),
-                    ),
-                  ),
                   ListenableBuilder(
                     listenable: viewmodel,
                     builder: (context, widget) {
@@ -132,89 +131,98 @@ class _ClientsScreenState extends State<ClientsScreen> {
                       );
                     },
                   ),
+                  OutlinedButton(
+                    onPressed: () {
+                      GoRouter.of(context).pushNamed(Routes.createClient.name);
+                    },
+                    child: const Text('Novo'),
+                  ),
                 ],
               ),
-              OutlinedButton(
-                onPressed: () {
-                  GoRouter.of(context).pushNamed(Routes.createClient.name);
-                },
-                child: const Text('Novo'),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: ListenableBuilder(
-                  listenable: viewmodel,
-                  builder: (context, widget) {
-                    return DataTable(
-                      showCheckboxColumn: false,
-                      columns: const [
-                        DataColumn(
-                          label: Text('Razao social'),
-                        ),
-                        DataColumn(
-                          label: Text('CNPJ'),
-                        ),
-                        DataColumn(
-                          label: Text('Nome na fachada'),
-                        ),
-                        DataColumn(
-                          label: Text('Tags'),
-                        ),
-                        DataColumn(
-                          label: Text('Status'),
-                        ),
-                        DataColumn(
-                          label: Text('Conecta Plus'),
-                        ),
-                      ],
-                      rows: List.generate(
-                        viewmodel.clients.length,
-                        (index) {
-                          final client = viewmodel.clients[index];
-                          return DataRow(
-                            onSelectChanged: (_) {
-                              final clientId = client.id;
-                              if (clientId == null) {
-                                return;
-                              }
-                              GoRouter.of(context).pushNamed(
-                                Routes.clients.detailName,
-                                pathParameters: {
-                                  'id': clientId.toString(),
+              ListenableBuilder(
+                listenable: viewmodel,
+                builder: (context, _) {
+                  return LayoutBuilder(builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SizedBox(
+                        width: constraints.maxWidth < 600
+                            ? 600
+                            : constraints.maxWidth,
+                        child: DataTable(
+                          showCheckboxColumn: false,
+                          columns: const [
+                            DataColumn(
+                              label: Text('Razao social'),
+                            ),
+                            DataColumn(
+                              label: Text('CNPJ'),
+                            ),
+                            DataColumn(
+                              label: Text('Nome na fachada'),
+                            ),
+                            DataColumn(
+                              label: Text('Tags'),
+                            ),
+                            DataColumn(
+                              label: Text('Status'),
+                            ),
+                            DataColumn(
+                              label: Text('Conecta Plus'),
+                            ),
+                          ],
+                          rows: List.generate(
+                            viewmodel.clients.length,
+                            (index) {
+                              final client = viewmodel.clients[index];
+                              return DataRow(
+                                onSelectChanged: (_) {
+                                  final clientId = client.id;
+                                  if (clientId == null) {
+                                    return;
+                                  }
+                                  GoRouter.of(context).pushNamed(
+                                    Routes.clients.detailName,
+                                    pathParameters: {
+                                      'id': clientId.toString(),
+                                    },
+                                  );
                                 },
+                                cells: [
+                                  DataCell(
+                                    Text(client.name ?? '-'),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      client.cnpj?.mask('##.###.###/####-##') ??
+                                          '-',
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(client.legalName ?? '-'),
+                                  ),
+                                  const DataCell(
+                                    Text('-'),
+                                  ),
+                                  DataCell(
+                                    Text(client.status?.label ?? '-'),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      (client.conectaPlus ?? false)
+                                          ? 'Sim'
+                                          : 'Não',
+                                    ),
+                                  ),
+                                ],
                               );
                             },
-                            cells: [
-                              DataCell(
-                                Text(client.name ?? '-'),
-                              ),
-                              DataCell(
-                                Text(
-                                  client.cnpj?.mask('##.###.###/####-##') ??
-                                      '-',
-                                ),
-                              ),
-                              DataCell(
-                                Text(client.legalName ?? '-'),
-                              ),
-                              const DataCell(
-                                Text('-'),
-                              ),
-                              DataCell(
-                                Text(client.status?.label ?? '-'),
-                              ),
-                              DataCell(
-                                Text(
-                                  (client.conectaPlus ?? false) ? 'Sim' : 'Não',
-                                ),
-                              ),
-                            ],
-                          );
-                        },
+                          ),
+                        ),
                       ),
                     );
-                  },
-                ),
+                  });
+                },
               ),
             ],
           ),
