@@ -1,5 +1,9 @@
 import 'package:conectar_frontend/data/repositories/clients_repository.dart';
 import 'package:conectar_frontend/domain/models/client/client_model.dart';
+import 'package:conectar_frontend/domain/models/client_status/client_status_model.dart';
+import 'package:conectar_frontend/domain/models/filters/client_filters/client_filters_model.dart';
+import 'package:conectar_frontend/shared/models/pagination/pagination_input/pagination_input_model.dart';
+import 'package:conectar_frontend/shared/models/pagination/pagination_output/pagination_output_model.dart';
 import 'package:flutter/foundation.dart';
 
 final _clientsRepository = ClientsRepository();
@@ -7,13 +11,79 @@ final _clientsRepository = ClientsRepository();
 class ClientsViewmodel extends ChangeNotifier {
   List<Client> _clients = [];
   List<Client> get clients => _clients;
-  void setClients(List<Client> values) => _clients = values;
+  void setClients(List<Client> values) {
+    _clients = values;
+    notifyListeners();
+  }
 
-  Future<void> load() async {
+  PaginationOutput _paginationOutput = const PaginationOutput();
+  PaginationOutput get paginationOutput => _paginationOutput;
+  void setPaginationOutput(PaginationOutput value) => _paginationOutput = value;
+
+  PaginationInput _paginationInput = const PaginationInput();
+  PaginationInput get paginationInput => _paginationInput;
+  void setPaginationInput(PaginationInput value) {
+    _paginationInput = value;
+    notifyListeners();
+  }
+
+  ClientFilters _clientFilters = const ClientFilters();
+
+  String? get nameFilter => _clientFilters.nome;
+  void setNameFilter(String? value) {
+    _clientFilters = _clientFilters.copyWith(nome: value);
+    notifyListeners();
+  }
+
+  String? get cnpjFilter => _clientFilters.cnpj;
+  void setCnpjFilter(String? value) {
+    _clientFilters = _clientFilters.copyWith(cnpj: value);
+    notifyListeners();
+  }
+
+  ClientStatus? get statusFilter => _clientFilters.status;
+  void setStatusFilter(ClientStatus? value) {
+    _clientFilters = _clientFilters.copyWith(status: value);
+    notifyListeners();
+  }
+
+  bool? get conectarPlusFilter => _clientFilters.conectaPlus;
+  void setConectarPlusFilter(bool? value) {
+    _clientFilters = _clientFilters.copyWith(conectaPlus: value);
+    notifyListeners();
+  }
+
+  Future<bool> applyFilters() async {
+    final success = await load();
+
+    return success;
+  }
+
+  Future<bool> resetFilters() async {
+    _clientFilters = const ClientFilters();
+    notifyListeners();
+
+    final success = await load();
+
+    return success;
+  }
+
+  Future<bool> load() async {
     try {
-      await _clientsRepository.findAll();
+      final response = await _clientsRepository.findAll(
+        paginationInput: _paginationInput,
+        filters: _clientFilters,
+      );
+
+      _clients = response.$1;
+      _paginationOutput = response.$2;
+
+      notifyListeners();
+
+      return true;
     } catch (e) {
       debugPrint('Error while loading ClientsViewmodel => $e');
     }
+    return false;
   }
 }

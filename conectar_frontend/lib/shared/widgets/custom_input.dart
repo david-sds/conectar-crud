@@ -8,6 +8,7 @@ enum InputType {
 
 class CustomInput extends StatefulWidget {
   const CustomInput({
+    this.controller,
     this.labelText,
     this.onChanged,
     this.validator,
@@ -16,6 +17,7 @@ class CustomInput extends StatefulWidget {
   }) : type = InputType.text;
 
   const CustomInput.password({
+    this.controller,
     this.labelText,
     this.onChanged,
     this.validator,
@@ -23,6 +25,7 @@ class CustomInput extends StatefulWidget {
     super.key,
   }) : type = InputType.password;
 
+  final TextEditingController? controller;
   final String? labelText;
   final void Function(String value)? onChanged;
   final String? Function(String? value)? validator;
@@ -89,6 +92,7 @@ class _CustomInputState extends State<CustomInput> {
       children: [
         if (widget.labelText != null) Text(widget.labelText ?? ''),
         TextFormField(
+          controller: widget.controller,
           decoration: InputDecoration(
             helperText: " ",
             suffixIcon: getSuffixIcon(),

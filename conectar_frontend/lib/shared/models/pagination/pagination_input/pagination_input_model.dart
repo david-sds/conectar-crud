@@ -1,17 +1,19 @@
-import 'package:conectar_frontend/shared/models/pagination/order_by_direction/order_by_direction_model.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class PaginationInput {
-  final int? page;
-  final int? size;
-  final String? orderBy;
-  final OrderByDirection? direction;
-  final String? search;
+part 'pagination_input_model.freezed.dart';
+part 'pagination_input_model.g.dart';
 
-  const PaginationInput({
-    this.page,
-    this.size,
-    this.orderBy,
-    this.direction,
-    this.search,
-  });
+@freezed
+@immutable
+class PaginationInput with _$PaginationInput {
+  const factory PaginationInput({
+    final int? page,
+    final int? size,
+    final String? sortBy,
+    final String? order,
+    final String? search,
+  }) = _PaginationInput;
+
+  factory PaginationInput.fromJson(Map<String, Object?> json) =>
+      _$PaginationInputFromJson(json);
 }
