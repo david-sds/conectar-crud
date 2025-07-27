@@ -11,20 +11,16 @@ class CustomPagination extends StatelessWidget {
   final PaginationOutput paginationOutput;
   final void Function(int pageNumber) onChangePage;
 
-  int get totalNumber => paginationOutput.total ?? 0;
-
-  int get numberOfPages =>
-      (totalNumber / paginationOutput.numberPerPage).ceil();
-
-  bool get isFirstPage => firstItem == 1;
-
-  bool get isLastPage => paginationOutput.currentPageIndex == numberOfPages - 1;
-
   int get firstItem =>
       paginationOutput.currentPageIndex * paginationOutput.numberPerPage + 1;
 
+  bool get isFirstPage => firstItem == 1;
+
+  bool get isLastPage =>
+      paginationOutput.currentPageIndex == paginationOutput.totalPages - 1;
+
   int get lastItem => isLastPage
-      ? totalNumber
+      ? paginationOutput.totalEntries
       : (paginationOutput.currentPageIndex * paginationOutput.numberPerPage) +
           paginationOutput.numberPerPage +
           1;
@@ -37,7 +33,7 @@ class CustomPagination extends StatelessWidget {
       children: [
         const SizedBox(width: 32.0),
         Text(
-          '$firstItem-$lastItem de $totalNumber',
+          '$firstItem-$lastItem de ${paginationOutput.totalEntries}',
         ),
         const SizedBox(width: 32.0),
         IconButton(

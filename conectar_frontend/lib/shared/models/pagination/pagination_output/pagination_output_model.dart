@@ -21,12 +21,12 @@ class PaginationOutput with _$PaginationOutput {
 
   int get totalEntries => total ?? 0;
 
+  int get numberPerPage => totalPerPage ?? 1;
+
   int get totalPages =>
       numberPerPage != 0 ? (totalEntries / numberPerPage).ceil() : 0;
 
   int get currentPageIndex => (currentPage ?? 1) - 1;
-
-  int get numberPerPage => totalPerPage ?? 0;
 
   bool get isLastPage =>
       currentPageIndex ==

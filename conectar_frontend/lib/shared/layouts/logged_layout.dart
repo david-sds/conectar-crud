@@ -23,6 +23,11 @@ enum AppBarTabs {
 
   final String label;
   final Routes route;
+
+  static int indexFromPath(String path) {
+    return AppBarTabs.values
+        .indexWhere((tab) => path.startsWith(tab.route.path));
+  }
 }
 
 class LoggedLayout extends StatefulWidget {
@@ -47,6 +52,12 @@ class _LoggedLayoutState extends State<LoggedLayout>
       length: AppBarTabs.values.length,
       vsync: this,
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final path =
+          GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
+      final index = AppBarTabs.indexFromPath(path);
+      _tabController.index = index >= 0 ? index : 0;
+    });
     super.initState();
   }
 
