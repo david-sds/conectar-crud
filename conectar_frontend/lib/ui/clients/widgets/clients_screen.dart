@@ -1,10 +1,10 @@
-import 'package:conectar_frontend/core/extensions/string_extension.dart';
 import 'package:conectar_frontend/core/routing/routes.dart';
 import 'package:conectar_frontend/domain/models/client_status/client_status_model.dart';
 import 'package:conectar_frontend/shared/widgets/custom_dropdown.dart';
 import 'package:conectar_frontend/shared/widgets/custom_input.dart';
 import 'package:conectar_frontend/shared/widgets/custom_pagination.dart';
 import 'package:conectar_frontend/ui/clients/viewmodel/clients_viewmodel.dart';
+import 'package:conectar_frontend/ui/clients/widgets/clients_table.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -139,91 +139,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                   ),
                 ],
               ),
-              ListenableBuilder(
-                listenable: viewmodel,
-                builder: (context, _) {
-                  return LayoutBuilder(builder: (context, constraints) {
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: SizedBox(
-                        width: constraints.maxWidth < 600
-                            ? 600
-                            : constraints.maxWidth,
-                        child: DataTable(
-                          showCheckboxColumn: false,
-                          columns: const [
-                            DataColumn(
-                              label: Text('Razao social'),
-                            ),
-                            DataColumn(
-                              label: Text('CNPJ'),
-                            ),
-                            DataColumn(
-                              label: Text('Nome na fachada'),
-                            ),
-                            DataColumn(
-                              label: Text('Tags'),
-                            ),
-                            DataColumn(
-                              label: Text('Status'),
-                            ),
-                            DataColumn(
-                              label: Text('Conecta Plus'),
-                            ),
-                          ],
-                          rows: List.generate(
-                            viewmodel.clients.length,
-                            (index) {
-                              final client = viewmodel.clients[index];
-                              return DataRow(
-                                onSelectChanged: (_) {
-                                  final clientId = client.id;
-                                  if (clientId == null) {
-                                    return;
-                                  }
-                                  GoRouter.of(context).pushNamed(
-                                    Routes.clients.detailName,
-                                    pathParameters: {
-                                      'id': clientId.toString(),
-                                    },
-                                  );
-                                },
-                                cells: [
-                                  DataCell(
-                                    Text(client.name ?? '-'),
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      client.cnpj?.mask('##.###.###/####-##') ??
-                                          '-',
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Text(client.legalName ?? '-'),
-                                  ),
-                                  const DataCell(
-                                    Text('-'),
-                                  ),
-                                  DataCell(
-                                    Text(client.status?.label ?? '-'),
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      (client.conectaPlus ?? false)
-                                          ? 'Sim'
-                                          : 'Não',
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    );
-                  });
-                },
-              ),
+              const ClientsTable(),
             ],
           ),
         ),
