@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 }
 
                 if (isLoggedIn) {
-                  GoRouter.of(context).goNamed(Routes.users.name);
+                  GoRouter.of(context).goNamed(Routes.clients.name);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

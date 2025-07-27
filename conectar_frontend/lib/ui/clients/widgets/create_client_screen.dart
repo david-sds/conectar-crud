@@ -1,3 +1,4 @@
+import 'package:conectar_frontend/core/routing/routes.dart';
 import 'package:conectar_frontend/ui/clients/viewmodel/clients_viewmodel.dart';
 import 'package:conectar_frontend/ui/clients/widgets/client_form/client_form.dart';
 import 'package:flutter/material.dart';
@@ -16,13 +17,13 @@ class CreateClientScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: ClientForm(
             onCancel: () async {
-              GoRouter.of(context).pop();
+              GoRouter.of(context).go(Routes.clients.path);
             },
             onSubmit: (client) async {
               final response = await viewmodel.create(client);
 
               if (response?.id != null && context.mounted) {
-                GoRouter.of(context).pop();
+                GoRouter.of(context).go(Routes.clients.path);
               }
             },
           ),

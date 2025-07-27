@@ -1,8 +1,10 @@
+import 'package:conectar_frontend/core/routing/routes.dart';
 import 'package:conectar_frontend/ui/clients/viewmodel/clients_viewmodel.dart';
 import 'package:conectar_frontend/ui/clients/widgets/client_form/client_form.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class EditClientScreen extends StatefulWidget {
   const EditClientScreen({
@@ -37,25 +39,27 @@ class _EditClientScreenState extends State<EditClientScreen> {
           child: ListenableBuilder(
             listenable: viewmodel,
             builder: (context, _) {
-              print('pia ${viewmodel.selectedClient}');
-              return ClientForm(
-                initialState: viewmodel.selectedClient,
-                onCancel: () async {
-                  GoRouter.of(context).pop();
-                },
-                onSubmit: (client) async {
-                  final clientId = client.id;
-                  print(clientId);
-                  if (clientId == null) {
-                    return;
-                  }
+              return Skeletonizer(
+                enabled: viewmodel.isLoading,
+                child: ClientForm(
+                  initialState: viewmodel.selectedClient,
+                  onCancel: () async {
+                    GoRouter.of(context).go(Routes.clients.path);
+                  },
+                  onSubmit: (client) async {
+                    final clientId = client.id;
 
-                  final response = await viewmodel.update(clientId, client);
+                    if (clientId == null) {
+                      return;
+                    }
 
-                  if (response?.id != null && context.mounted) {
-                    GoRouter.of(context).pop();
-                  }
-                },
+                    final response = await viewmodel.update(clientId, client);
+
+                    if (response?.id != null && context.mounted) {
+                      GoRouter.of(context).go(Routes.clients.path);
+                    }
+                  },
+                ),
               );
             },
           ),

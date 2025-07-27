@@ -13,6 +13,13 @@ class ClientsViewmodel extends ChangeNotifier {
 
   final ClientsRepository _clientsRepository;
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  void setIsLoading(bool values) {
+    _isLoading = values;
+    notifyListeners();
+  }
+
   List<Client> _clients = [];
   List<Client> get clients => _clients;
   void setClients(List<Client> values) {
@@ -81,6 +88,8 @@ class ClientsViewmodel extends ChangeNotifier {
 
   Future<bool> load() async {
     try {
+      setIsLoading(true);
+
       final response = await _clientsRepository.findAll(
         paginationInput: _paginationInput,
         filters: _clientFilters,
@@ -94,6 +103,8 @@ class ClientsViewmodel extends ChangeNotifier {
       return true;
     } catch (e) {
       debugPrint('Error while loading ClientsViewmodel => $e');
+    } finally {
+      setIsLoading(false);
     }
     return false;
   }
@@ -104,6 +115,8 @@ class ClientsViewmodel extends ChangeNotifier {
 
   Future<Client?> findOne(int clientId) async {
     try {
+      setIsLoading(true);
+
       final response = await _clientsRepository.findOne(
         clientId,
       );
@@ -113,6 +126,8 @@ class ClientsViewmodel extends ChangeNotifier {
       return response;
     } catch (e) {
       debugPrint('Error while finding one ClientsViewmodel => $e');
+    } finally {
+      setIsLoading(false);
     }
     return null;
   }
