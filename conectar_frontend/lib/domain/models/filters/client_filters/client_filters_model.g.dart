@@ -23,6 +23,6 @@ Map<String, dynamic> _$$ClientFiltersImplToJson(_$ClientFiltersImpl instance) =>
     };
 
 const _$ClientStatusEnumMap = {
-  ClientStatus.active: 'ACTIVE',
-  ClientStatus.inactive: 'INACTIVE',
+  ClientStatus.active: 'active',
+  ClientStatus.inactive: 'inactive',
 };

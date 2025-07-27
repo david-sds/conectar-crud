@@ -34,20 +34,38 @@ class ClientsRepository {
     return (models, paginationOutput);
   }
 
-  Future<Client?> findOne(int userId) async {
-    return null;
+  Future<Client> findOne(int userId) async {
+    final response = await _dio.get(
+      '/clients/$userId',
+    );
+
+    return _clientJsonToClass(response.data);
   }
 
   Future<Client?> create(Client payload) async {
-    return null;
+    final response = await _dio.post(
+      '/clients',
+      data: payload.toJson(),
+    );
+
+    return _clientJsonToClass(response.data);
   }
 
   Future<Client?> update(int userId, Client payload) async {
-    return null;
+    final response = await _dio.patch(
+      '/clients/$userId',
+      data: payload.toJson(),
+    );
+
+    return _clientJsonToClass(response.data);
   }
 
   Future<Client?> delete(int userId) async {
-    return null;
+    final response = await _dio.delete(
+      '/clients/$userId',
+    );
+
+    return _clientJsonToClass(response.data);
   }
 
   Client _clientJsonToClass(dynamic json) {

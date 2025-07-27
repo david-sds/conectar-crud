@@ -7,13 +7,13 @@ import 'package:go_router/go_router.dart';
 final _authViewmodel = AuthViewmodel();
 
 enum AppBarTabs {
-  users(
-    label: 'Usuarios',
-    route: Routes.users,
-  ),
   clients(
     label: 'Clientes',
     route: Routes.clients,
+  ),
+  users(
+    label: 'Usuarios',
+    route: Routes.users,
   );
 
   const AppBarTabs({

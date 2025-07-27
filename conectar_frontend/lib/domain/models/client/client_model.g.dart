@@ -11,7 +11,8 @@ _$ClientImpl _$$ClientImplFromJson(Map<String, dynamic> json) => _$ClientImpl(
       cnpj: json['cnpj'] as String?,
       name: json['name'] as String?,
       legalName: json['legalName'] as String?,
-      status: json['status'] as String?,
+      status: _$JsonConverterFromJson<String, ClientStatus>(
+          json['status'], const ClientStatusConverter().fromJson),
       conectaPlus: json['conectaPlus'] as bool?,
       address: json['address'] == null
           ? null
@@ -30,9 +31,22 @@ Map<String, dynamic> _$$ClientImplToJson(_$ClientImpl instance) =>
       'cnpj': instance.cnpj,
       'name': instance.name,
       'legalName': instance.legalName,
-      'status': instance.status,
+      'status': _$JsonConverterToJson<String, ClientStatus>(
+          instance.status, const ClientStatusConverter().toJson),
       'conectaPlus': instance.conectaPlus,
       'address': instance.address,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) =>
+    value == null ? null : toJson(value);

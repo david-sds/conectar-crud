@@ -24,7 +24,8 @@ mixin _$Client {
   String? get cnpj => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get legalName => throw _privateConstructorUsedError;
-  String? get status => throw _privateConstructorUsedError;
+  @ClientStatusConverter()
+  ClientStatus? get status => throw _privateConstructorUsedError;
   bool? get conectaPlus => throw _privateConstructorUsedError;
   Address? get address => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
@@ -49,7 +50,7 @@ abstract class $ClientCopyWith<$Res> {
       String? cnpj,
       String? name,
       String? legalName,
-      String? status,
+      @ClientStatusConverter() ClientStatus? status,
       bool? conectaPlus,
       Address? address,
       DateTime? createdAt,
@@ -103,7 +104,7 @@ class _$ClientCopyWithImpl<$Res, $Val extends Client>
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as ClientStatus?,
       conectaPlus: freezed == conectaPlus
           ? _value.conectaPlus
           : conectaPlus // ignore: cast_nullable_to_non_nullable
@@ -150,7 +151,7 @@ abstract class _$$ClientImplCopyWith<$Res> implements $ClientCopyWith<$Res> {
       String? cnpj,
       String? name,
       String? legalName,
-      String? status,
+      @ClientStatusConverter() ClientStatus? status,
       bool? conectaPlus,
       Address? address,
       DateTime? createdAt,
@@ -203,7 +204,7 @@ class __$$ClientImplCopyWithImpl<$Res>
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as ClientStatus?,
       conectaPlus: freezed == conectaPlus
           ? _value.conectaPlus
           : conectaPlus // ignore: cast_nullable_to_non_nullable
@@ -232,7 +233,7 @@ class _$ClientImpl implements _Client {
       this.cnpj,
       this.name,
       this.legalName,
-      this.status,
+      @ClientStatusConverter() this.status,
       this.conectaPlus,
       this.address,
       this.createdAt,
@@ -250,7 +251,8 @@ class _$ClientImpl implements _Client {
   @override
   final String? legalName;
   @override
-  final String? status;
+  @ClientStatusConverter()
+  final ClientStatus? status;
   @override
   final bool? conectaPlus;
   @override
@@ -312,7 +314,7 @@ abstract class _Client implements Client {
       final String? cnpj,
       final String? name,
       final String? legalName,
-      final String? status,
+      @ClientStatusConverter() final ClientStatus? status,
       final bool? conectaPlus,
       final Address? address,
       final DateTime? createdAt,
@@ -329,7 +331,8 @@ abstract class _Client implements Client {
   @override
   String? get legalName;
   @override
-  String? get status;
+  @ClientStatusConverter()
+  ClientStatus? get status;
   @override
   bool? get conectaPlus;
   @override

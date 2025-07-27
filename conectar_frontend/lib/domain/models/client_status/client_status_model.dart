@@ -1,17 +1,9 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-@JsonEnum()
 enum ClientStatus {
-  @JsonValue('ACTIVE')
-  active,
+  active('ACTIVE', 'Ativo'),
+  inactive('INACTIVE', 'Inativo');
 
-  @JsonValue('INACTIVE')
-  inactive;
-}
+  final String value;
+  final String label;
 
-extension ClientStatusExtension on ClientStatus {
-  String get label => switch (this) {
-        ClientStatus.active => 'Ativo',
-        ClientStatus.inactive => 'Inativo',
-      };
+  const ClientStatus(this.value, this.label);
 }

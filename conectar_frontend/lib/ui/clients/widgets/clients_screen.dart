@@ -1,9 +1,12 @@
+import 'package:conectar_frontend/core/routing/routes.dart';
 import 'package:conectar_frontend/domain/models/client_status/client_status_model.dart';
 import 'package:conectar_frontend/shared/widgets/custom_dropdown.dart';
 import 'package:conectar_frontend/shared/widgets/custom_input.dart';
 import 'package:conectar_frontend/shared/widgets/custom_pagination.dart';
 import 'package:conectar_frontend/ui/clients/viewmodel/clients_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ClientsScreen extends StatefulWidget {
   const ClientsScreen({super.key});
@@ -13,19 +16,22 @@ class ClientsScreen extends StatefulWidget {
 }
 
 class _ClientsScreenState extends State<ClientsScreen> {
-  final _viewmodel = ClientsViewmodel();
-
   final _nomeController = TextEditingController();
   final _cnpjController = TextEditingController();
 
   @override
   void initState() {
-    _viewmodel.load();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final vm = context.read<ClientsViewmodel>();
+      vm.load();
+    });
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final viewmodel = context.read<ClientsViewmodel>();
     return Column(
       children: [
         Card(
@@ -34,7 +40,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
             subtitle: const Text('Filtre ou busque itens na página.'),
             children: [
               ListenableBuilder(
-                  listenable: _viewmodel,
+                  listenable: viewmodel,
                   builder: (context, widget) {
                     return Row(
                       children: [
@@ -42,7 +48,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                           child: CustomInput(
                             controller: _nomeController,
                             labelText: 'Buscar por nome',
-                            onChanged: _viewmodel.setNameFilter,
+                            onChanged: viewmodel.setNameFilter,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -50,7 +56,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                           child: CustomInput(
                             controller: _cnpjController,
                             labelText: 'Buscar por CNPJ',
-                            onChanged: _viewmodel.setCnpjFilter,
+                            onChanged: viewmodel.setCnpjFilter,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -59,8 +65,8 @@ class _ClientsScreenState extends State<ClientsScreen> {
                             labelText: 'Buscar por status',
                             itemLabel: (value) => value?.label,
                             items: ClientStatus.values,
-                            onChanged: _viewmodel.setStatusFilter,
-                            value: _viewmodel.statusFilter,
+                            onChanged: viewmodel.setStatusFilter,
+                            value: viewmodel.statusFilter,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -70,8 +76,8 @@ class _ClientsScreenState extends State<ClientsScreen> {
                             itemLabel: (value) =>
                                 value ? 'Possúi' : 'Não possúi',
                             items: const [true, false],
-                            onChanged: _viewmodel.setConectarPlusFilter,
-                            value: _viewmodel.conectarPlusFilter,
+                            onChanged: viewmodel.setConectarPlusFilter,
+                            value: viewmodel.conectarPlusFilter,
                           ),
                         ),
                       ],
@@ -82,7 +88,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                 children: [
                   OutlinedButton(
                     onPressed: () async {
-                      final success = await _viewmodel.resetFilters();
+                      final success = await viewmodel.resetFilters();
 
                       if (success) {
                         _nomeController.clear();
@@ -92,7 +98,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                     child: const Text('Limpar campos'),
                   ),
                   FilledButton(
-                    onPressed: _viewmodel.applyFilters,
+                    onPressed: viewmodel.applyFilters,
                     child: const Text('Filtrar'),
                   ),
                 ],
@@ -115,12 +121,12 @@ class _ClientsScreenState extends State<ClientsScreen> {
                     ),
                   ),
                   ListenableBuilder(
-                    listenable: _viewmodel,
+                    listenable: viewmodel,
                     builder: (context, widget) {
                       return CustomPagination(
-                        paginationOutput: _viewmodel.paginationOutput,
+                        paginationOutput: viewmodel.paginationOutput,
                         onChangePage: (pageNumber) async {
-                          await _viewmodel.changePage(pageNumber);
+                          await viewmodel.changePage(pageNumber);
                         },
                       );
                     },
@@ -128,13 +134,15 @@ class _ClientsScreenState extends State<ClientsScreen> {
                 ],
               ),
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  GoRouter.of(context).pushNamed(Routes.createClient.name);
+                },
                 child: const Text('Novo'),
               ),
               SizedBox(
                 width: double.infinity,
                 child: ListenableBuilder(
-                  listenable: _viewmodel,
+                  listenable: viewmodel,
                   builder: (context, widget) {
                     return DataTable(
                       columns: const [
@@ -158,9 +166,9 @@ class _ClientsScreenState extends State<ClientsScreen> {
                         ),
                       ],
                       rows: List.generate(
-                        _viewmodel.clients.length,
+                        viewmodel.clients.length,
                         (index) {
-                          final client = _viewmodel.clients[index];
+                          final client = viewmodel.clients[index];
                           return DataRow(
                             cells: [
                               DataCell(
@@ -176,7 +184,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                                 Text('-'),
                               ),
                               DataCell(
-                                Text(client.status ?? '-'),
+                                Text(client.status?.label ?? '-'),
                               ),
                               DataCell(
                                 Text(

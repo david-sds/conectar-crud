@@ -4,8 +4,10 @@ import 'package:conectar_frontend/shared/layouts/logged_layout.dart';
 import 'package:conectar_frontend/shared/layouts/not_logged_layout.dart';
 import 'package:conectar_frontend/ui/auth/widgets/login_screen.dart';
 import 'package:conectar_frontend/ui/clients/widgets/clients_screen.dart';
+import 'package:conectar_frontend/ui/clients/widgets/create_client_screen.dart';
 import 'package:conectar_frontend/ui/not_found_screen.dart';
 import 'package:conectar_frontend/ui/users/widgets/users_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final _guards = Guards();
@@ -30,7 +32,15 @@ final _loggedStack = ShellRoute(
       builder: (context, state) {
         return const ClientsScreen();
       },
-    )
+    ),
+    GoRoute(
+      path: Routes.createClient.path,
+      name: Routes.createClient.name,
+      redirect: _guards.authGuard.logged,
+      builder: (context, state) {
+        return const CreateClientScreen();
+      },
+    ),
   ],
 );
 
@@ -50,17 +60,19 @@ final _notLoggedStack = ShellRoute(
   ],
 );
 
-final router = GoRouter(
-  routes: [
-    GoRoute(
-      name: Routes.initial.name,
-      path: Routes.initial.path,
-      redirect: (context, state) => Routes.clients.path,
+GoRouter createRouter(BuildContext context) {
+  return GoRouter(
+    routes: [
+      GoRoute(
+        name: Routes.initial.name,
+        path: Routes.initial.path,
+        redirect: (context, state) => Routes.clients.path,
+      ),
+      _loggedStack,
+      _notLoggedStack,
+    ],
+    errorBuilder: (context, state) => const LoggedLayout(
+      child: NotFoundScreen(),
     ),
-    _loggedStack,
-    _notLoggedStack,
-  ],
-  errorBuilder: (context, state) => const LoggedLayout(
-    child: NotFoundScreen(),
-  ),
-);
+  );
+}

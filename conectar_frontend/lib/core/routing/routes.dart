@@ -11,6 +11,10 @@ enum Routes {
     name: 'clients',
     path: '/clients',
   ),
+  createClient(
+    name: 'createClient',
+    path: '/clients/new',
+  ),
   users(
     name: 'users',
     path: '/users',

@@ -6,9 +6,13 @@ import 'package:conectar_frontend/shared/models/pagination/pagination_input/pagi
 import 'package:conectar_frontend/shared/models/pagination/pagination_output/pagination_output_model.dart';
 import 'package:flutter/foundation.dart';
 
-final _clientsRepository = ClientsRepository();
-
 class ClientsViewmodel extends ChangeNotifier {
+  ClientsViewmodel({
+    required ClientsRepository clientsRepository,
+  }) : _clientsRepository = clientsRepository;
+
+  final ClientsRepository _clientsRepository;
+
   List<Client> _clients = [];
   List<Client> get clients => _clients;
   void setClients(List<Client> values) {
@@ -92,5 +96,71 @@ class ClientsViewmodel extends ChangeNotifier {
       debugPrint('Error while loading ClientsViewmodel => $e');
     }
     return false;
+  }
+
+  Future<Client?> findOne(int clientId) async {
+    try {
+      final response = await _clientsRepository.findOne(
+        clientId,
+      );
+
+      return response;
+    } catch (e) {
+      debugPrint('Error while finding one ClientsViewmodel => $e');
+    }
+    return null;
+  }
+
+  Future<Client?> create(Client client, {bool reload = true}) async {
+    try {
+      final response = await _clientsRepository.create(
+        client,
+      );
+
+      if (reload) {
+        await load();
+      }
+
+      return response;
+    } catch (e) {
+      debugPrint('Error while creating ClientsViewmodel => $e');
+    }
+    return null;
+  }
+
+  Future<Client?> update(int clientId, Client client,
+      {bool reload = true}) async {
+    try {
+      final response = await _clientsRepository.update(
+        clientId,
+        client,
+      );
+
+      if (reload) {
+        await load();
+      }
+
+      return response;
+    } catch (e) {
+      debugPrint('Error while updating ClientsViewmodel => $e');
+    }
+    return null;
+  }
+
+  Future<Client?> delete(int clientId, {bool reload = true}) async {
+    try {
+      final response = await _clientsRepository.delete(
+        clientId,
+      );
+
+      if (reload) {
+        await load();
+      }
+
+      return response;
+    } catch (e) {
+      debugPrint('Error while deleting ClientsViewmodel => $e');
+    }
+    return null;
   }
 }
