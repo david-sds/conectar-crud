@@ -1,3 +1,4 @@
+import 'package:conectar_frontend/core/extensions/string_extension.dart';
 import 'package:conectar_frontend/domain/models/client/client_model.dart';
 import 'package:conectar_frontend/domain/models/client_status/client_status_model.dart';
 import 'package:conectar_frontend/shared/forms/address_form/address_form.dart';
@@ -5,6 +6,7 @@ import 'package:conectar_frontend/shared/widgets/custom_dropdown.dart';
 import 'package:conectar_frontend/shared/widgets/custom_input.dart';
 import 'package:conectar_frontend/ui/clients/widgets/client_form/client_form_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class ClientForm extends StatefulWidget {
   const ClientForm({
@@ -35,17 +37,48 @@ class _ClientFormState extends State<ClientForm> {
           CustomInput(
             labelText: 'CNPJ',
             initialValue: ctrl.cnpj,
-            onChanged: ctrl.setCnpj,
+            onChanged: (value) {
+              ctrl.setCnpj(value.filterNumberOnly());
+            },
+            inputFormatters: [
+              MaskTextInputFormatter(
+                mask: '##.###.###/####-##',
+                filter: {'#': RegExp(r'[0-9]')},
+                type: MaskAutoCompletionType.lazy,
+                initialText: ctrl.cnpj,
+              ),
+            ],
+            validator: (value) {
+              if (value == null || value == '') {
+                return 'Obrigatório';
+              }
+              if (value.filterNumberOnly().length != 14) {
+                return 'O CNPJ deve ter 14 caracteres';
+              }
+              return null;
+            },
           ),
           CustomInput(
             labelText: 'Razão social',
             initialValue: ctrl.name,
             onChanged: ctrl.setName,
+            validator: (value) {
+              if (value == null || value == '') {
+                return 'Obrigatório';
+              }
+              return null;
+            },
           ),
           CustomInput(
             labelText: 'Nome na fachada',
             initialValue: ctrl.legalName,
             onChanged: ctrl.setLegalName,
+            validator: (value) {
+              if (value == null || value == '') {
+                return 'Obrigatório';
+              }
+              return null;
+            },
           ),
           Row(
             children: [
@@ -56,6 +89,12 @@ class _ClientFormState extends State<ClientForm> {
                   items: ClientStatus.values,
                   onChanged: ctrl.setStatus,
                   value: ctrl.status,
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Obrigatório';
+                    }
+                    return null;
+                  },
                 ),
               ),
               const SizedBox(width: 8),
@@ -66,6 +105,12 @@ class _ClientFormState extends State<ClientForm> {
                   items: const [true, false],
                   onChanged: ctrl.setConectaPlus,
                   value: ctrl.conectaPlus,
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Obrigatório';
+                    }
+                    return null;
+                  },
                 ),
               ),
             ],

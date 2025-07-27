@@ -1,3 +1,4 @@
+import 'package:conectar_frontend/core/extensions/string_extension.dart';
 import 'package:conectar_frontend/core/routing/routes.dart';
 import 'package:conectar_frontend/domain/models/client_status/client_status_model.dart';
 import 'package:conectar_frontend/shared/widgets/custom_dropdown.dart';
@@ -175,7 +176,10 @@ class _ClientsScreenState extends State<ClientsScreen> {
                                 Text(client.name ?? '-'),
                               ),
                               DataCell(
-                                Text(client.cnpj ?? '-'),
+                                Text(
+                                  client.cnpj?.mask('##.###.###/####-##') ??
+                                      '-',
+                                ),
                               ),
                               DataCell(
                                 Text(client.legalName ?? '-'),

@@ -1,9 +1,11 @@
+import 'package:conectar_frontend/core/extensions/string_extension.dart';
 import 'package:conectar_frontend/domain/models/address/address_model.dart';
 import 'package:conectar_frontend/shared/forms/address_form/address_form_controller.dart';
 import 'package:conectar_frontend/shared/widgets/custom_dropdown.dart';
 import 'package:conectar_frontend/shared/widgets/custom_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class AddressForm extends StatefulWidget {
@@ -69,8 +71,25 @@ class _AddressFormState extends State<AddressForm> {
                   labelText: 'CEP',
                   initialValue: ctrl.zipCode,
                   onChanged: (val) {
-                    ctrl.setZipCode(val);
+                    ctrl.setZipCode(val.filterNumberOnly());
                   },
+                  validator: (value) {
+                    if (value == null || value == '') {
+                      return 'Obrigatório';
+                    }
+                    if (value.filterNumberOnly().length != 8) {
+                      return 'O CEP deve ter 8 caracteres';
+                    }
+                    return null;
+                  },
+                  inputFormatters: [
+                    MaskTextInputFormatter(
+                      mask: '#####-###',
+                      filter: {'#': RegExp(r'[0-9]')},
+                      type: MaskAutoCompletionType.lazy,
+                      initialText: ctrl.zipCode,
+                    ),
+                  ],
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.search),
                     onPressed: () async {
@@ -87,6 +106,13 @@ class _AddressFormState extends State<AddressForm> {
                   onChanged: (val) {
                     ctrl.setStreet(val);
                   },
+                  validator: (value) {
+                    if (value == null || value == '') {
+                      return 'Obrigatório';
+                    }
+
+                    return null;
+                  },
                 ),
                 const SizedBox(
                   height: 8,
@@ -102,6 +128,13 @@ class _AddressFormState extends State<AddressForm> {
                         initialValue: ctrl.number,
                         onChanged: (val) {
                           ctrl.setNumber(val);
+                        },
+                        validator: (value) {
+                          if (value == null || value == '') {
+                            return 'Obrigatório';
+                          }
+
+                          return null;
                         },
                       ),
                     ),
@@ -134,6 +167,13 @@ class _AddressFormState extends State<AddressForm> {
                         onChanged: (value) {
                           ctrl.setState(value);
                         },
+                        validator: (value) {
+                          if (value == null || value == '') {
+                            return 'Obrigatório';
+                          }
+
+                          return null;
+                        },
                       ),
                     ),
                     const SizedBox(
@@ -148,6 +188,13 @@ class _AddressFormState extends State<AddressForm> {
                         onChanged: (value) {
                           ctrl.setCity(value);
                         },
+                        validator: (value) {
+                          if (value == null || value == '') {
+                            return 'Obrigatório';
+                          }
+
+                          return null;
+                        },
                       ),
                     ),
                     const SizedBox(
@@ -159,6 +206,13 @@ class _AddressFormState extends State<AddressForm> {
                         initialValue: ctrl.district,
                         onChanged: (val) {
                           ctrl.setDistrict(val);
+                        },
+                        validator: (value) {
+                          if (value == null || value == '') {
+                            return 'Obrigatório';
+                          }
+
+                          return null;
                         },
                       ),
                     ),
