@@ -5,6 +5,7 @@ import 'package:conectar_frontend/shared/layouts/not_logged_layout.dart';
 import 'package:conectar_frontend/ui/auth/widgets/login_screen.dart';
 import 'package:conectar_frontend/ui/clients/widgets/clients_screen.dart';
 import 'package:conectar_frontend/ui/clients/widgets/create_client_screen.dart';
+import 'package:conectar_frontend/ui/clients/widgets/edit_client_screen.dart';
 import 'package:conectar_frontend/ui/not_found_screen.dart';
 import 'package:conectar_frontend/ui/users/widgets/users_screen.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,20 @@ final _loggedStack = ShellRoute(
       redirect: _guards.authGuard.logged,
       builder: (context, state) {
         return const ClientsScreen();
+      },
+    ),
+    GoRoute(
+      path: Routes.clients.detailPath,
+      name: Routes.clients.detailName,
+      redirect: _guards.authGuard.logged,
+      builder: (context, state) {
+        final clientId = int.tryParse(state.pathParameters['id'] ?? '');
+        if (clientId == null) {
+          return const NotFoundScreen();
+        }
+        return EditClientScreen(
+          clientId: clientId,
+        );
       },
     ),
     GoRoute(

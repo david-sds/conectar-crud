@@ -146,6 +146,7 @@ class _ClientsScreenState extends State<ClientsScreen> {
                   listenable: viewmodel,
                   builder: (context, widget) {
                     return DataTable(
+                      showCheckboxColumn: false,
                       columns: const [
                         DataColumn(
                           label: Text('Razao social'),
@@ -171,6 +172,18 @@ class _ClientsScreenState extends State<ClientsScreen> {
                         (index) {
                           final client = viewmodel.clients[index];
                           return DataRow(
+                            onSelectChanged: (_) {
+                              final clientId = client.id;
+                              if (clientId == null) {
+                                return;
+                              }
+                              GoRouter.of(context).pushNamed(
+                                Routes.clients.detailName,
+                                pathParameters: {
+                                  'id': clientId.toString(),
+                                },
+                              );
+                            },
                             cells: [
                               DataCell(
                                 Text(client.name ?? '-'),

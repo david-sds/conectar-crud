@@ -12,7 +12,7 @@ class AddressFormController with ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
-  void setIsLoading(bool value) {
+  void _setIsLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
@@ -66,9 +66,19 @@ class AddressFormController with ChangeNotifier {
     notifyListeners();
   }
 
+  void initState(Address? initialState) {
+    _number = initialState?.number;
+    _street = initialState?.street;
+    _district = initialState?.district;
+    _city = initialState?.city;
+    _state = initialState?.state;
+    _zipCode = initialState?.zipCode;
+    _complement = initialState?.complement;
+    notifyListeners();
+  }
+
   Map<String, List<dynamic>> _citiesByState = Map.of({});
-  Map<String, List<dynamic>> get citiesByState => _citiesByState;
-  void setCitiesByState(Map<String, List<dynamic>> value) {
+  void _setCitiesByState(Map<String, List<dynamic>> value) {
     _citiesByState = Map.of(value);
     notifyListeners();
   }
@@ -87,7 +97,7 @@ class AddressFormController with ChangeNotifier {
             e['cidades'] as List<dynamic>,
           ));
       final citiesByState = Map.fromEntries(entries);
-      setCitiesByState(citiesByState);
+      _setCitiesByState(citiesByState);
     } catch (e) {
       debugPrint('Error while converting json cities data => $e');
     }
@@ -101,7 +111,7 @@ class AddressFormController with ChangeNotifier {
     }
 
     try {
-      setIsLoading(true);
+      _setIsLoading(true);
 
       final response =
           await Dio().get('https://viacep.com.br/ws/$zipCode/json');
@@ -115,25 +125,13 @@ class AddressFormController with ChangeNotifier {
     } catch (e) {
       debugPrint('Error while loading Endereco by CEP => $e');
     } finally {
-      setIsLoading(false);
+      _setIsLoading(false);
     }
   }
 
-  Address? submit() {
+  bool validate() {
     final isValid = formKey.currentState?.validate() ?? false;
 
-    if (!isValid) {
-      return null;
-    }
-
-    return Address(
-      number: _number,
-      street: _street,
-      state: _state,
-      city: _city,
-      district: _district,
-      zipCode: _zipCode,
-      complement: _complement,
-    );
+    return isValid;
   }
 }

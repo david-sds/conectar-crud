@@ -1,4 +1,3 @@
-import 'package:conectar_frontend/domain/models/address/address_model.dart';
 import 'package:conectar_frontend/domain/models/client/client_model.dart';
 import 'package:conectar_frontend/domain/models/client_status/client_status_model.dart';
 import 'package:conectar_frontend/shared/forms/address_form/address_form_controller.dart';
@@ -44,31 +43,20 @@ class ClientFormController extends ChangeNotifier {
 
   final AddressFormController addressFormController = AddressFormController();
 
-  Client? submit() {
+  void initState(Client? initialState) {
+    _cnpj = initialState?.cnpj;
+    _conectaPlus = initialState?.conectaPlus;
+    _legalName = initialState?.legalName;
+    _name = initialState?.name;
+    _status = initialState?.status;
+    addressFormController.initState(initialState?.address);
+    notifyListeners();
+  }
+
+  bool validate() {
     final isClientValid = formKey.currentState?.validate() ?? false;
-    final isAddressValid =
-        addressFormController.formKey.currentState?.validate() ?? false;
+    final isAddressValid = addressFormController.validate();
 
-    if (!isClientValid || !isAddressValid) {
-      return null;
-    }
-
-    return Client(
-      cnpj: cnpj,
-      conectaPlus: conectaPlus,
-      legalName: legalName,
-      name: name,
-      status: status,
-      address: Address(
-        zipCode: addressFormController.zipCode,
-        country: 'Brasil',
-        state: addressFormController.state,
-        city: addressFormController.city,
-        district: addressFormController.district,
-        street: addressFormController.state,
-        number: addressFormController.number,
-        complement: addressFormController.complement,
-      ),
-    );
+    return !isClientValid && isAddressValid;
   }
 }

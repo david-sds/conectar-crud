@@ -98,11 +98,17 @@ class ClientsViewmodel extends ChangeNotifier {
     return false;
   }
 
+  Client? _selectedClient;
+  Client? get selectedClient => _selectedClient;
+  void setSelectedClient(Client? value) => _selectedClient = value;
+
   Future<Client?> findOne(int clientId) async {
     try {
       final response = await _clientsRepository.findOne(
         clientId,
       );
+
+      _selectedClient = response;
 
       return response;
     } catch (e) {

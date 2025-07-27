@@ -31,24 +31,8 @@ class _AddressFormState extends State<AddressForm> {
   void initState() {
     ctrl = widget.controller ?? AddressFormController();
     ctrl.loadCitiesByStates();
-    ctrl.setNumber(widget.initialState?.number);
-    ctrl.setStreet(widget.initialState?.street);
-    ctrl.setState(widget.initialState?.state);
-    ctrl.setCity(widget.initialState?.city);
-    ctrl.setDistrict(widget.initialState?.district);
-    ctrl.setZipCode(widget.initialState?.zipCode);
-    ctrl.setComplement(widget.initialState?.complement);
+    ctrl.initState(widget.initialState);
     super.initState();
-  }
-
-  void submit() {
-    final address = ctrl.submit();
-
-    if (address == null) {
-      return;
-    }
-
-    widget.onSubmit?.call(address);
   }
 
   @override
@@ -57,7 +41,7 @@ class _AddressFormState extends State<AddressForm> {
       key: ctrl.formKey,
       child: ListenableBuilder(
         listenable: ctrl,
-        builder: (context, widget) {
+        builder: (context, _) {
           return Skeletonizer(
             enabled: ctrl.isLoading,
             child: Column(
