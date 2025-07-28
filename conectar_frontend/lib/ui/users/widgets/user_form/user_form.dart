@@ -1,6 +1,7 @@
 import 'package:conectar_frontend/core/extensions/string_extension.dart';
 import 'package:conectar_frontend/domain/models/client/client_model.dart';
 import 'package:conectar_frontend/domain/models/user/user_model.dart';
+import 'package:conectar_frontend/domain/models/user_details/user_details_model.dart';
 import 'package:conectar_frontend/domain/models/user_role/user_role_model.dart';
 import 'package:conectar_frontend/shared/widgets/custom_autocomplete.dart';
 import 'package:conectar_frontend/shared/widgets/custom_dropdown.dart';
@@ -19,8 +20,8 @@ class UserForm extends StatefulWidget {
     super.key,
   });
 
-  final User? initialState;
-  final Future<void> Function(User user)? onSubmit;
+  final UserDetails? initialState;
+  final Future<void> Function(User user, List<Client> clients)? onSubmit;
   final Future<void> Function()? onCancel;
 
   @override
@@ -65,14 +66,14 @@ class _UserFormState extends State<UserForm> {
                         return;
                       }
 
-                      final user =
-                          (widget.initialState ?? const User()).copyWith(
+                      final user = User(
+                        id: widget.initialState?.id,
                         name: ctrl.name,
                         email: ctrl.email,
                         role: ctrl.role,
                       );
 
-                      await widget.onSubmit?.call(user);
+                      await widget.onSubmit?.call(user, ctrl.selectedClients);
                     },
                     child: Text(
                       widget.initialState?.id == null

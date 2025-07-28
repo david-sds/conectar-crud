@@ -10,7 +10,7 @@ class CreateUserScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewmodel = context.read<UsersViewmodel>();
+    final usersViewmodel = context.read<UsersViewmodel>();
     return Container(
       constraints: const BoxConstraints(minHeight: 800),
       child: Column(
@@ -21,8 +21,8 @@ class CreateUserScreen extends StatelessWidget {
               onCancel: () async {
                 GoRouter.of(context).go(Routes.users.path);
               },
-              onSubmit: (user) async {
-                final response = await viewmodel.create(user);
+              onSubmit: (user, clients) async {
+                final response = await usersViewmodel.create(user);
 
                 if (response?.id != null && context.mounted) {
                   GoRouter.of(context).go(Routes.users.path);

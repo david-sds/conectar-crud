@@ -46,12 +46,27 @@ class _EditUserScreenState extends State<EditUserScreen> {
                   onCancel: () async {
                     GoRouter.of(context).go(Routes.users.path);
                   },
-                  onSubmit: (user) async {
+                  onSubmit: (user, clients) async {
                     final userId = user.id;
 
                     if (userId == null) {
                       return;
                     }
+
+                    final removeClientIds =
+                        (viewmodel.selectedUser?.clients ?? [])
+                            .map((e) => e.id)
+                            .whereType<int>()
+                            .toList();
+
+                    final addClientids =
+                        clients.map((e) => e.id).whereType<int>().toList();
+
+                    await viewmodel.updateUserClients(
+                      userId,
+                      addClientIds: addClientids,
+                      removeClientIds: removeClientIds,
+                    );
 
                     final response = await viewmodel.update(userId, user);
 

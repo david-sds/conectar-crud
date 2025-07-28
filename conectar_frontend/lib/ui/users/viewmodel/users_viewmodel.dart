@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:conectar_frontend/data/repositories/users_repository.dart';
 import 'package:conectar_frontend/domain/models/filters/user_filters/user_filters_model.dart';
 import 'package:conectar_frontend/domain/models/user/user_model.dart';
+import 'package:conectar_frontend/domain/models/user_details/user_details_model.dart';
 import 'package:conectar_frontend/domain/models/user_role/user_role_model.dart';
 import 'package:conectar_frontend/shared/models/pagination/pagination_input/pagination_input_model.dart';
 import 'package:conectar_frontend/shared/models/pagination/pagination_output/pagination_output_model.dart';
@@ -105,11 +106,11 @@ class UsersViewmodel extends ChangeNotifier {
     return false;
   }
 
-  User? _selectedUser;
-  User? get selectedUser => _selectedUser;
-  void setSelectedUser(User? value) => _selectedUser = value;
+  UserDetails? _selectedUser;
+  UserDetails? get selectedUser => _selectedUser;
+  void setSelectedUser(UserDetails? value) => _selectedUser = value;
 
-  Future<User?> findOne(int userId) async {
+  Future<UserDetails?> findOne(int userId) async {
     try {
       setIsLoading(true);
 
@@ -167,6 +168,52 @@ class UsersViewmodel extends ChangeNotifier {
     try {
       final response = await _usersRepository.delete(
         userId,
+      );
+
+      if (reload) {
+        await load();
+      }
+
+      return response;
+    } catch (e) {
+      debugPrint('Error while deleting UsersViewmodel => $e');
+    }
+    return null;
+  }
+
+  Future<int?> updateUserClients(
+    int userId, {
+    required List<int> addClientIds,
+    required List<int> removeClientIds,
+    bool reload = true,
+  }) async {
+    try {
+      final response = await _usersRepository.updateUserClients(
+        userId,
+        addClientIds,
+        removeClientIds,
+      );
+
+      if (reload) {
+        await load();
+      }
+
+      return response;
+    } catch (e) {
+      debugPrint('Error while deleting UsersViewmodel => $e');
+    }
+    return null;
+  }
+
+  Future<int?> removeClientsFromUser(
+    int userId,
+    List<int> clientIds, {
+    bool reload = true,
+  }) async {
+    try {
+      final response = await _usersRepository.removeClientsFromUser(
+        userId,
+        clientIds,
       );
 
       if (reload) {

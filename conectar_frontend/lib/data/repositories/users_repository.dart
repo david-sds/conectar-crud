@@ -1,6 +1,7 @@
 import 'package:conectar_frontend/data/services/http_client_service.dart';
 import 'package:conectar_frontend/domain/models/filters/user_filters/user_filters_model.dart';
 import 'package:conectar_frontend/domain/models/user/user_model.dart';
+import 'package:conectar_frontend/domain/models/user_details/user_details_model.dart';
 import 'package:conectar_frontend/shared/models/pagination/pagination_input/pagination_input_model.dart';
 import 'package:conectar_frontend/shared/models/pagination/pagination_output/pagination_output_model.dart';
 import 'package:dio/dio.dart';
@@ -42,20 +43,20 @@ class UsersRepository {
     return _userListToJsonClass(response.data);
   }
 
-  Future<User?> findMe() async {
+  Future<UserDetails> findMe() async {
     final response = await _dio.get(
       '/users/me',
     );
 
-    return _userJsonToClass(response.data);
+    return _userDetailsJsonToClass(response.data);
   }
 
-  Future<User> findOne(int userId) async {
+  Future<UserDetails> findOne(int userId) async {
     final response = await _dio.get(
       '/users/$userId',
     );
 
-    return _userJsonToClass(response.data);
+    return _userDetailsJsonToClass(response.data);
   }
 
   Future<User?> create(User payload) async {
@@ -82,6 +83,35 @@ class UsersRepository {
     );
 
     return _userJsonToClass(response.data);
+  }
+
+  Future<int> updateUserClients(
+    int userId,
+    List<int> addClientIds,
+    List<int> removeClientIds,
+  ) async {
+    final response = await _dio.patch(
+      '/users/update-clients/$userId',
+      data: {
+        'addClientIds': addClientIds,
+        'removeClientIds': removeClientIds,
+      },
+    );
+
+    return response.data;
+  }
+
+  Future<int> removeClientsFromUser(int userId, List<int> clientIds) async {
+    final response = await _dio.patch(
+      '/users/remove-from-user/$userId',
+      data: {'clientIds': clientIds},
+    );
+
+    return response.data;
+  }
+
+  UserDetails _userDetailsJsonToClass(dynamic json) {
+    return UserDetails.fromJson((json ?? {}) as Map<String, dynamic>);
   }
 
   User _userJsonToClass(dynamic json) {
