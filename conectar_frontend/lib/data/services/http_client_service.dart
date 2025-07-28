@@ -11,11 +11,11 @@ final baseOptions = BaseOptions(
   headers: {'Content-Type': 'application/json'},
 );
 
-class HttpService {
+class HttpClient {
   final Dio dio;
   final AuthRepository _authRepository;
 
-  HttpService()
+  HttpClient()
       : _authRepository = AuthRepository(),
         dio = Dio(baseOptions) {
     _setupInterceptors();
@@ -37,6 +37,7 @@ class HttpService {
 
           if (!isAuthError) {
             handler.next(e);
+            return;
           }
 
           final isRefreshed = await _authRepository.refresh();
