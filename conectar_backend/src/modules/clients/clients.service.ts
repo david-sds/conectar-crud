@@ -70,6 +70,8 @@ export class ClientsService {
         throw new NotFoundException('Client not found');
       }
 
+      console.log(client);
+
       return await this.clientsRepository.update(id, client);
     } catch (e) {
       if (isPrismaKnownError(e)) {
