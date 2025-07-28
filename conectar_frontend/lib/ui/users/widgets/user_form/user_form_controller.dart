@@ -20,6 +20,20 @@ class UserFormController extends ChangeNotifier {
     notifyListeners();
   }
 
+  String? _password;
+  String? get password => _password;
+  setPassword(String? value) {
+    _password = value;
+    notifyListeners();
+  }
+
+  String? _confirmPassword;
+  String? get confirmPassword => _confirmPassword;
+  setConfirmPassword(String? value) {
+    _confirmPassword = value;
+    notifyListeners();
+  }
+
   UserRole? _role;
   UserRole? get role => _role;
   setRole(UserRole? value) {

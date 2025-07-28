@@ -4,8 +4,7 @@ import 'package:conectar_frontend/ui/auth/widgets/login_form/login_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-
-final _authViewmodel = AuthViewmodel();
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({
@@ -19,6 +18,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
+    final viewmodel = context.read<AuthViewmodel>();
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Card(
             child: LoginForm(
               onSubmit: (credentials) async {
-                final isLoggedIn = await _authViewmodel.login(credentials);
+                final isLoggedIn = await viewmodel.login(credentials);
 
                 if (!context.mounted) {
                   return;

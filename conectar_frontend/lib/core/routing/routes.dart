@@ -22,6 +22,10 @@ enum Routes {
   createUser(
     name: 'createUser',
     path: '/users/new',
+  ),
+  profile(
+    name: 'profile',
+    path: '/profile',
   );
 
   const Routes({

@@ -1,6 +1,6 @@
 import 'package:conectar_frontend/core/extensions/string_extension.dart';
 import 'package:conectar_frontend/domain/models/client/client_model.dart';
-import 'package:conectar_frontend/domain/models/user/user_model.dart';
+import 'package:conectar_frontend/domain/models/register_user/register_user_model.dart';
 import 'package:conectar_frontend/domain/models/user_details/user_details_model.dart';
 import 'package:conectar_frontend/domain/models/user_role/user_role_model.dart';
 import 'package:conectar_frontend/shared/widgets/custom_autocomplete.dart';
@@ -21,7 +21,8 @@ class UserForm extends StatefulWidget {
   });
 
   final UserDetails? initialState;
-  final Future<void> Function(User user, List<Client> clients)? onSubmit;
+  final Future<void> Function(RegisterUser user, List<Client> clients)?
+      onSubmit;
   final Future<void> Function()? onCancel;
 
   @override
@@ -66,7 +67,7 @@ class _UserFormState extends State<UserForm> {
                         return;
                       }
 
-                      final user = User(
+                      final user = RegisterUser(
                         id: widget.initialState?.id,
                         name: ctrl.name,
                         email: ctrl.email,
@@ -105,6 +106,20 @@ class _UserFormState extends State<UserForm> {
                   }
                   if (!isEmail(value)) {
                     return 'Email inválido';
+                  }
+                  return null;
+                },
+              ),
+              CustomInput.password(
+                labelText: 'Senha',
+                onChanged: ctrl.setPassword,
+              ),
+              CustomInput.password(
+                labelText: 'Confirmar senha',
+                onChanged: ctrl.setConfirmPassword,
+                validator: (value) {
+                  if ((value ?? '') != (ctrl.password ?? '')) {
+                    return 'As senhas precisam ser iguais';
                   }
                   return null;
                 },

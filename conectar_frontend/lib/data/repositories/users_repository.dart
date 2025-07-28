@@ -1,5 +1,6 @@
 import 'package:conectar_frontend/data/services/http_client_service.dart';
 import 'package:conectar_frontend/domain/models/filters/user_filters/user_filters_model.dart';
+import 'package:conectar_frontend/domain/models/register_user/register_user_model.dart';
 import 'package:conectar_frontend/domain/models/user/user_model.dart';
 import 'package:conectar_frontend/domain/models/user_details/user_details_model.dart';
 import 'package:conectar_frontend/shared/models/pagination/pagination_input/pagination_input_model.dart';
@@ -59,7 +60,7 @@ class UsersRepository {
     return _userDetailsJsonToClass(response.data);
   }
 
-  Future<User?> create(User payload) async {
+  Future<User?> create(RegisterUser payload) async {
     final response = await _dio.post(
       '/users',
       data: payload.toJson(),
@@ -68,7 +69,7 @@ class UsersRepository {
     return _userJsonToClass(response.data);
   }
 
-  Future<User?> update(int userId, User payload) async {
+  Future<User?> update(int userId, RegisterUser payload) async {
     final response = await _dio.patch(
       '/users/$userId',
       data: payload.toJson(),

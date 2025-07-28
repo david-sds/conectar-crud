@@ -101,4 +101,43 @@ class AuthRepository {
 
     return true;
   }
+
+  Future<bool> changePassword(String newPassword) async {
+    final accessToken = await _tokenService.getAccessToken();
+
+    if (accessToken == null) {
+      return false;
+    }
+
+    final response = await _dio.post(
+      '/auth/change-password',
+      data: {
+        'newPassword': newPassword,
+      },
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+        },
+      ),
+    );
+
+    final statusCode = response.statusCode ?? 0;
+    if (statusCode < 200 || statusCode >= 300) {
+      return false;
+    }
+
+    final newAccessToken = response.data['accessToken'];
+    final newRefreshToken = response.data['refreshToken'];
+
+    if (newAccessToken == null || newRefreshToken == null) {
+      return false;
+    }
+
+    await _tokenService.saveTokens(
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    );
+
+    return true;
+  }
 }

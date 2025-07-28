@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:conectar_frontend/data/repositories/users_repository.dart';
 import 'package:conectar_frontend/domain/models/filters/user_filters/user_filters_model.dart';
+import 'package:conectar_frontend/domain/models/register_user/register_user_model.dart';
 import 'package:conectar_frontend/domain/models/user/user_model.dart';
 import 'package:conectar_frontend/domain/models/user_details/user_details_model.dart';
 import 'package:conectar_frontend/domain/models/user_role/user_role_model.dart';
@@ -129,7 +130,7 @@ class UsersViewmodel extends ChangeNotifier {
     return null;
   }
 
-  Future<User?> create(User user, {bool reload = true}) async {
+  Future<User?> create(RegisterUser user, {bool reload = true}) async {
     try {
       final response = await _usersRepository.create(
         user,
@@ -146,7 +147,11 @@ class UsersViewmodel extends ChangeNotifier {
     return null;
   }
 
-  Future<User?> update(int userId, User user, {bool reload = true}) async {
+  Future<User?> update(
+    int userId,
+    RegisterUser user, {
+    bool reload = true,
+  }) async {
     try {
       final response = await _usersRepository.update(
         userId,

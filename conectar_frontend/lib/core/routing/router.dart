@@ -3,6 +3,7 @@ import 'package:conectar_frontend/core/routing/routes.dart';
 import 'package:conectar_frontend/shared/layouts/logged_layout.dart';
 import 'package:conectar_frontend/shared/layouts/not_logged_layout.dart';
 import 'package:conectar_frontend/ui/auth/widgets/login_screen.dart';
+import 'package:conectar_frontend/ui/auth/widgets/profile_screen.dart';
 import 'package:conectar_frontend/ui/clients/widgets/clients_screen.dart';
 import 'package:conectar_frontend/ui/clients/widgets/create_client_screen.dart';
 import 'package:conectar_frontend/ui/clients/widgets/edit_client_screen.dart';
@@ -78,6 +79,14 @@ final _loggedStack = ShellRoute(
         return EditUserScreen(
           userId: userId,
         );
+      },
+    ),
+    GoRoute(
+      path: Routes.profile.path,
+      name: Routes.profile.name,
+      redirect: _guards.authGuard.logged,
+      builder: (context, state) {
+        return const ProfileScreen();
       },
     ),
   ],

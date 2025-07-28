@@ -3,8 +3,7 @@ import 'package:conectar_frontend/shared/widgets/custom_app_bar.dart';
 import 'package:conectar_frontend/ui/auth/viewmodel/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-final _authViewmodel = AuthViewmodel();
+import 'package:provider/provider.dart';
 
 enum AppBarTabs {
   clients(
@@ -14,6 +13,10 @@ enum AppBarTabs {
   users(
     label: 'Usuarios',
     route: Routes.users,
+  ),
+  profile(
+    label: 'Perfil',
+    route: Routes.profile,
   );
 
   const AppBarTabs({
@@ -57,12 +60,15 @@ class _LoggedLayoutState extends State<LoggedLayout>
           GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
       final index = AppBarTabs.indexFromPath(path);
       _tabController.index = index >= 0 ? index : 0;
+      final vm = context.read<AuthViewmodel>();
+      vm.findMe();
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final authViewmodel = context.read<AuthViewmodel>();
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size(
@@ -80,7 +86,7 @@ class _LoggedLayoutState extends State<LoggedLayout>
             tabs: AppBarTabs.values.map((e) => Tab(text: e.label)).toList(),
           ),
           onLogout: () async {
-            final isLoggedOut = await _authViewmodel.logout();
+            final isLoggedOut = await authViewmodel.logout();
 
             if (isLoggedOut && context.mounted) {
               GoRouter.of(context).goNamed(Routes.login.name);

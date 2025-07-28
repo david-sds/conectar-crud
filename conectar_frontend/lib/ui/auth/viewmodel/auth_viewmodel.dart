@@ -1,14 +1,37 @@
 import 'package:conectar_frontend/data/repositories/auth_repository.dart';
+import 'package:conectar_frontend/data/repositories/users_repository.dart';
 import 'package:conectar_frontend/domain/models/credentials/credentials_model.dart';
+import 'package:conectar_frontend/domain/models/user_details/user_details_model.dart';
 import 'package:flutter/material.dart';
 
 class AuthViewmodel extends ChangeNotifier {
-  final authRepository = AuthRepository();
+  AuthViewmodel({
+    required AuthRepository authRepository,
+    required UsersRepository usersRepository,
+  })  : _authRepository = authRepository,
+        _usersRepository = usersRepository;
+
+  final AuthRepository _authRepository;
+  final UsersRepository _usersRepository;
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  void setIsLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
 
   bool _isLoggedIn = false;
   bool get isLoggedIn => _isLoggedIn;
   void setIsLoggedIn(bool value) {
     _isLoggedIn = value;
+    notifyListeners();
+  }
+
+  UserDetails? _loggedUser;
+  UserDetails? get loggedUser => _loggedUser;
+  void setLoggedUser(UserDetails? value) {
+    _loggedUser = value;
     notifyListeners();
   }
 
@@ -21,7 +44,7 @@ class AuthViewmodel extends ChangeNotifier {
         return false;
       }
 
-      final isLoggedIn = await authRepository.login(
+      final isLoggedIn = await _authRepository.login(
         email: email,
         password: password,
       );
@@ -41,7 +64,7 @@ class AuthViewmodel extends ChangeNotifier {
 
   Future<bool> logout() async {
     try {
-      final isLoggedOut = await authRepository.logout();
+      final isLoggedOut = await _authRepository.logout();
 
       if (!isLoggedOut) {
         return false;
@@ -52,6 +75,42 @@ class AuthViewmodel extends ChangeNotifier {
       return true;
     } catch (e) {
       debugPrint('Error while logging out => $e');
+    }
+    return false;
+  }
+
+  Future<UserDetails?> findMe() async {
+    try {
+      setIsLoading(true);
+
+      final response = await _usersRepository.findMe();
+
+      setLoggedUser(response);
+
+      return response;
+    } catch (e) {
+      debugPrint('Error while finding me UsersViewmodel => $e');
+    } finally {
+      setIsLoading(false);
+    }
+    return null;
+  }
+
+  Future<bool> changePassword(String newPassword) async {
+    try {
+      final isLoggedIn = await _authRepository.changePassword(
+        newPassword,
+      );
+
+      if (!isLoggedIn) {
+        return false;
+      }
+
+      setIsLoggedIn(true);
+
+      return true;
+    } catch (e) {
+      debugPrint('Error while changing password => $e');
     }
     return false;
   }
