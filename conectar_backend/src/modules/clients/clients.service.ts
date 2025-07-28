@@ -6,13 +6,17 @@ import {
   isPrismaKnownError,
 } from 'src/core/utils/prisma-error-handler.util';
 import { TokenDecodeDto } from '../auth/dto/token-decode.dto';
+import { UsersService } from '../users/users.service';
 import { ClientsRepository } from './clients.repository';
 import { ClientQueryDto } from './dto/client-query.dto';
 import { ClientDto } from './dto/client.dto';
 
 @Injectable()
 export class ClientsService {
-  constructor(private readonly clientsRepository: ClientsRepository) {}
+  constructor(
+    private readonly clientsRepository: ClientsRepository,
+    private readonly usersService: UsersService,
+  ) {}
 
   async findAll(
     tokenDecode: TokenDecodeDto,
@@ -26,7 +30,7 @@ export class ClientsService {
 
   async findOne(id: number, tokenDecode: TokenDecodeDto): Promise<ClientDto> {
     try {
-      const canUpdate = await this.canEditClient(id, tokenDecode);
+      const canUpdate = await this.usersService.canEditClient(id, tokenDecode);
 
       if (!canUpdate) {
         throw new NotFoundException('Client not found');
@@ -64,7 +68,7 @@ export class ClientsService {
     tokenDecode: TokenDecodeDto,
   ): Promise<ClientDto> {
     try {
-      const canUpdate = await this.canEditClient(id, tokenDecode);
+      const canUpdate = await this.usersService.canEditClient(id, tokenDecode);
 
       if (!canUpdate) {
         throw new NotFoundException('Client not found');
