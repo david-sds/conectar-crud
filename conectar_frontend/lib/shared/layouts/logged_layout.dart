@@ -1,4 +1,5 @@
 import 'package:conectar_frontend/core/routing/routes.dart';
+import 'package:conectar_frontend/domain/models/user_role/user_role_model.dart';
 import 'package:conectar_frontend/shared/widgets/custom_app_bar.dart';
 import 'package:conectar_frontend/ui/auth/viewmodel/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -26,12 +27,10 @@ enum AppBarTabs {
 
   final String label;
   final Routes route;
-
-  static int indexFromPath(String path) {
-    return AppBarTabs.values
-        .indexWhere((tab) => path.startsWith(tab.route.path));
-  }
 }
+
+final adminTabs = [AppBarTabs.clients, AppBarTabs.users, AppBarTabs.profile];
+final userTabs = [AppBarTabs.clients, AppBarTabs.profile];
 
 class LoggedLayout extends StatefulWidget {
   const LoggedLayout({
@@ -47,47 +46,71 @@ class LoggedLayout extends StatefulWidget {
 
 class _LoggedLayoutState extends State<LoggedLayout>
     with SingleTickerProviderStateMixin {
+  late List<AppBarTabs> tabs;
   late TabController _tabController;
+  bool isLoading = true;
 
   @override
   void initState() {
+    super.initState();
+    _initTabs();
+  }
+
+  Future<void> _initTabs() async {
+    final vm = context.read<AuthViewmodel>();
+    final loggedUser = await vm.findMe();
+
+    if (!mounted) return;
+
+    tabs = loggedUser?.role == UserRole.admin ? adminTabs : userTabs;
+
     _tabController = TabController(
-      length: AppBarTabs.values.length,
+      length: tabs.length,
       vsync: this,
     );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final path =
-          GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
-      final index = AppBarTabs.indexFromPath(path);
-      _tabController.index = index >= 0 ? index : 0;
-      final vm = context.read<AuthViewmodel>();
-      vm.findMe();
+
+    final path =
+        GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
+
+    final index = tabs.indexWhere((tab) => path.startsWith(tab.route.path));
+    _tabController.index = index >= 0 ? index : 0;
+
+    setState(() {
+      isLoading = false;
     });
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final authViewmodel = context.read<AuthViewmodel>();
+
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size(
-          double.infinity,
-          kToolbarHeight,
-        ),
+        preferredSize: const Size(double.infinity, kToolbarHeight),
         child: CustomAppBar(
           tabBar: TabBar(
+            controller: _tabController,
             dividerColor: Colors.transparent,
             onTap: (index) {
-              final tab = AppBarTabs.values[index];
+              final tab = tabs[index];
               GoRouter.of(context).pushNamed(tab.route.name);
             },
-            controller: _tabController,
-            tabs: AppBarTabs.values.map((e) => Tab(text: e.label)).toList(),
+            tabs: tabs.map((e) => Tab(text: e.label)).toList(),
           ),
           onLogout: () async {
             final isLoggedOut = await authViewmodel.logout();
-
             if (isLoggedOut && context.mounted) {
               GoRouter.of(context).goNamed(Routes.login.name);
             }
@@ -97,9 +120,7 @@ class _LoggedLayoutState extends State<LoggedLayout>
       body: Column(
         children: [
           Expanded(
-            child: SingleChildScrollView(
-              child: widget.child,
-            ),
+            child: SingleChildScrollView(child: widget.child),
           ),
         ],
       ),
