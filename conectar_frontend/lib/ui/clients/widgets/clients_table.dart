@@ -61,7 +61,7 @@ class ClientsTable extends StatelessWidget {
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: SizedBox(
-                width: constraints.maxWidth < 600 ? 600 : constraints.maxWidth,
+                width: constraints.maxWidth < 930 ? 930 : constraints.maxWidth,
                 child: DataTable(
                   showCheckboxColumn: false,
                   columns: const [
