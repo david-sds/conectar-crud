@@ -7,6 +7,8 @@ import 'package:conectar_frontend/ui/clients/widgets/clients_screen.dart';
 import 'package:conectar_frontend/ui/clients/widgets/create_client_screen.dart';
 import 'package:conectar_frontend/ui/clients/widgets/edit_client_screen.dart';
 import 'package:conectar_frontend/ui/not_found_screen.dart';
+import 'package:conectar_frontend/ui/users/widgets/create_user_screen.dart';
+import 'package:conectar_frontend/ui/users/widgets/edit_user_screen.dart';
 import 'package:conectar_frontend/ui/users/widgets/users_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -54,6 +56,28 @@ final _loggedStack = ShellRoute(
       redirect: _guards.authGuard.logged,
       builder: (context, state) {
         return const UsersScreen();
+      },
+    ),
+    GoRoute(
+      path: Routes.createUser.path,
+      name: Routes.createUser.name,
+      redirect: _guards.authGuard.logged,
+      builder: (context, state) {
+        return const CreateUserScreen();
+      },
+    ),
+    GoRoute(
+      path: Routes.users.detailPath,
+      name: Routes.users.detailName,
+      redirect: _guards.authGuard.logged,
+      builder: (context, state) {
+        final userId = int.tryParse(state.pathParameters['id'] ?? '');
+        if (userId == null) {
+          return const NotFoundScreen();
+        }
+        return EditUserScreen(
+          userId: userId,
+        );
       },
     ),
   ],

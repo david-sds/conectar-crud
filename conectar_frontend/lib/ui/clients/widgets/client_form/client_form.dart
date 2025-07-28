@@ -44,6 +44,54 @@ class _ClientFormState extends State<ClientForm> {
           return Column(
             mainAxisSize: MainAxisSize.max,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  OutlinedButton(
+                    onPressed: widget.onCancel,
+                    child: const Text('Cancelar'),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  FilledButton(
+                    onPressed: () async {
+                      final isValid = ctrl.validate();
+                      if (!isValid) {
+                        return;
+                      }
+
+                      final client =
+                          (widget.initialState ?? const Client()).copyWith(
+                        cnpj: ctrl.cnpj,
+                        conectaPlus: ctrl.conectaPlus,
+                        legalName: ctrl.legalName,
+                        name: ctrl.name,
+                        status: ctrl.status,
+                        address:
+                            (widget.initialState?.address ?? const Address())
+                                .copyWith(
+                          zipCode: ctrl.addressFormController.zipCode,
+                          country: 'Brasil',
+                          state: ctrl.addressFormController.state,
+                          city: ctrl.addressFormController.city,
+                          district: ctrl.addressFormController.district,
+                          street: ctrl.addressFormController.state,
+                          number: ctrl.addressFormController.number,
+                          complement: ctrl.addressFormController.complement,
+                        ),
+                      );
+
+                      await widget.onSubmit?.call(client);
+                    },
+                    child: Text(
+                      widget.initialState?.id == null
+                          ? 'Criar cliente'
+                          : 'Editar cliente',
+                    ),
+                  ),
+                ],
+              ),
               CustomInput(
                 labelText: 'CNPJ',
                 initialValue: ctrl.cnpj,
@@ -94,7 +142,7 @@ class _ClientFormState extends State<ClientForm> {
                 children: [
                   Flexible(
                     child: CustomDropdown<ClientStatus?>(
-                      labelText: 'Buscar por status',
+                      labelText: 'Status',
                       itemLabel: (value) => value?.label,
                       items: ClientStatus.values,
                       onChanged: ctrl.setStatus,
@@ -110,7 +158,7 @@ class _ClientFormState extends State<ClientForm> {
                   const SizedBox(width: 8),
                   Flexible(
                     child: CustomDropdown<bool>(
-                      labelText: 'Buscar por conectar+',
+                      labelText: 'Conectar+',
                       itemLabel: (value) => value ? 'Possúi' : 'Não possúi',
                       items: const [true, false],
                       onChanged: ctrl.setConectaPlus,
@@ -128,54 +176,6 @@ class _ClientFormState extends State<ClientForm> {
               AddressForm(
                 controller: ctrl.addressFormController,
                 initialState: widget.initialState?.address,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  OutlinedButton(
-                    onPressed: widget.onCancel,
-                    child: const Text('Cancelar'),
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  FilledButton(
-                    onPressed: () async {
-                      final isValid = ctrl.validate();
-                      if (isValid) {
-                        return;
-                      }
-
-                      final client =
-                          (widget.initialState ?? const Client()).copyWith(
-                        cnpj: ctrl.cnpj,
-                        conectaPlus: ctrl.conectaPlus,
-                        legalName: ctrl.legalName,
-                        name: ctrl.name,
-                        status: ctrl.status,
-                        address:
-                            (widget.initialState?.address ?? const Address())
-                                .copyWith(
-                          zipCode: ctrl.addressFormController.zipCode,
-                          country: 'Brasil',
-                          state: ctrl.addressFormController.state,
-                          city: ctrl.addressFormController.city,
-                          district: ctrl.addressFormController.district,
-                          street: ctrl.addressFormController.state,
-                          number: ctrl.addressFormController.number,
-                          complement: ctrl.addressFormController.complement,
-                        ),
-                      );
-
-                      await widget.onSubmit?.call(client);
-                    },
-                    child: Text(
-                      widget.initialState?.id == null
-                          ? 'Criar cliente'
-                          : 'Editar cliente',
-                    ),
-                  ),
-                ],
               ),
             ],
           );

@@ -57,6 +57,6 @@ class ClientFormController extends ChangeNotifier {
     final isClientValid = formKey.currentState?.validate() ?? false;
     final isAddressValid = addressFormController.validate();
 
-    return !isClientValid && isAddressValid;
+    return isClientValid && isAddressValid;
   }
 }

@@ -1,4 +1,4 @@
-import 'package:conectar_frontend/data/services/http_service.dart';
+import 'package:conectar_frontend/data/services/http_client_service.dart';
 import 'package:conectar_frontend/data/services/token_service.dart';
 import 'package:dio/dio.dart';
 
