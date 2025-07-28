@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { decrypt } from 'src/core/utils/encryption.utils';
@@ -9,6 +13,7 @@ import {
 } from 'src/core/utils/prisma-error-handler.util';
 import { UserDto } from '../users/dto/user.dto';
 import { AuthRepository } from './auth.repository';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { CredentialsDto } from './dto/credentials.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { TokenDecodeDto } from './dto/token-decode.dto';
@@ -145,5 +150,29 @@ export class AuthService {
 
   async logout(userId: number): Promise<void> {
     await this.authRepository.clearRefreshToken(userId);
+  }
+
+  async changePassword(
+    email: string,
+    payload: ChangePasswordDto,
+  ): Promise<TokensDto> {
+    const { newPassword: password } = payload;
+
+    const hashedPassword = await hashPassword(password);
+
+    const success = await this.authRepository.changePassword(
+      email,
+      hashedPassword,
+    );
+
+    if (!success) {
+      throw new InternalServerErrorException(
+        'Something went wrong, contact support.',
+      );
+    }
+
+    const tokens = await this.login({ email, password });
+
+    return tokens;
   }
 }

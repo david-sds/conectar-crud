@@ -4,6 +4,7 @@ import { Public } from 'src/core/decorators/public.decorator';
 import { jwtDecode } from 'src/core/utils/jwt.utils';
 import { UserDto } from '../users/dto/user.dto';
 import { AuthService } from './auth.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { CredentialsDto } from './dto/credentials.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -33,5 +34,14 @@ export class AuthController {
   async logout(@Req() req: Request): Promise<void> {
     const tokenDecodeDto = jwtDecode(req);
     return await this.authService.logout(tokenDecodeDto.sub);
+  }
+
+  @Post('change-password')
+  async changePassword(
+    @Req() req: Request,
+    @Body() payload: ChangePasswordDto,
+  ): Promise<TokensDto> {
+    const tokenDecodeDto = jwtDecode(req);
+    return await this.authService.changePassword(tokenDecodeDto.email, payload);
   }
 }

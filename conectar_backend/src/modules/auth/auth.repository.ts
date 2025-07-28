@@ -55,4 +55,12 @@ export class AuthRepository {
     });
     return !!updated;
   }
+
+  async changePassword(email: string, newPassword: string): Promise<boolean> {
+    const updated = await this.prismaService.user.update({
+      where: { email: email },
+      data: { password: newPassword },
+    });
+    return !!updated;
+  }
 }

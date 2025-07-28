@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-base-to-string */
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
 export function handlePrismaError(e: Prisma.PrismaClientKnownRequestError) {
@@ -8,7 +8,7 @@ export function handlePrismaError(e: Prisma.PrismaClientKnownRequestError) {
     case 'P2025':
       throw new NotFoundException(`${e.meta?.modelName} not found`);
     case 'P2002':
-      throw new NotFoundException(
+      throw new BadRequestException(
         `${e.meta?.modelName} with this ${e.meta?.target} already exists`,
       );
 

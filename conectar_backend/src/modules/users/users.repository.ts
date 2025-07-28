@@ -6,6 +6,7 @@ import {
   PaginateOutput,
   paginateOutput,
 } from 'src/core/utils/pagination/pagination.utils';
+import { RegisterUserDto } from '../auth/dto/register-user.dto';
 import { ManageClientsDto } from '../clients/dto/manage-client.dto';
 import { UserDetailsDto } from './dto/user-details.dto';
 import { UserQueryDto } from './dto/user-query.dto';
@@ -109,11 +110,11 @@ export class UsersRepository {
     return entityToUserDto(entity);
   }
 
-  async create(user: UserDto): Promise<UserDto> {
+  async create(user: RegisterUserDto): Promise<UserDto> {
     const entity = await this.prismaService.user.create({
       data: {
         email: user.email,
-        password: process.env.DEFAULT_PASSWORD,
+        password: user.password,
         name: user.name,
         role: user.role,
       },

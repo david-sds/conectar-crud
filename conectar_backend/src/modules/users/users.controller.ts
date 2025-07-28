@@ -16,6 +16,7 @@ import { Request } from 'express';
 import { Roles } from 'src/core/decorators/roles.decorator';
 import { jwtDecode } from 'src/core/utils/jwt.utils';
 import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
+import { RegisterUserDto } from '../auth/dto/register-user.dto';
 import { ManageClientsDto } from '../clients/dto/manage-client.dto';
 import { UserDetailsDto } from './dto/user-details.dto';
 import { UserQueryDto } from './dto/user-query.dto';
@@ -53,7 +54,7 @@ export class UsersController {
 
   @Roles(Role.ADMIN)
   @Post()
-  create(@Body() user: UserDto): Promise<UserDto> {
+  create(@Body() user: RegisterUserDto): Promise<UserDto> {
     return this.usersService.create(user);
   }
 

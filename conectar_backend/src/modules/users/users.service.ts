@@ -1,10 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Role } from 'generated/prisma';
+import { hashPassword } from 'src/core/utils/hash.utils';
 import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
 import {
   handlePrismaError,
   isPrismaKnownError,
 } from 'src/core/utils/prisma-error-handler.util';
+import { RegisterUserDto } from '../auth/dto/register-user.dto';
 import { TokenDecodeDto } from '../auth/dto/token-decode.dto';
 import { ManageClientsDto } from '../clients/dto/manage-client.dto';
 import { UserDetailsDto } from './dto/user-details.dto';
@@ -58,8 +64,16 @@ export class UsersService {
     }
   }
 
-  async create(user: UserDto): Promise<UserDto> {
+  async create(user: RegisterUserDto): Promise<UserDto> {
     try {
+      const unencryptedPassword = user.password ?? process.env.DEFAULT_PASSWORD;
+
+      if (!unencryptedPassword) {
+        throw new BadRequestException('Invalid password');
+      }
+
+      user.password = await hashPassword(unencryptedPassword);
+
       return await this.usersRepository.create(user);
     } catch (e) {
       if (isPrismaKnownError(e)) {
