@@ -1,4 +1,3 @@
-import 'package:conectar_frontend/domain/models/client_status/client_status_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'client_filters_model.freezed.dart';

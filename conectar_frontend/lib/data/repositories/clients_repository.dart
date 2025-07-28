@@ -9,7 +9,7 @@ class ClientsRepository {
   final Dio _dio = HttpClient().dio;
 
   Future<(List<Client>, PaginationOutput)> findAll({
-    required PaginationInput? paginationInput,
+    PaginationInput? paginationInput,
     ClientFilters? filters,
   }) async {
     final paginationParams = (paginationInput?.toJson() ?? {})

@@ -1,3 +1,4 @@
+import 'package:conectar_frontend/domain/models/client/client_model.dart';
 import 'package:conectar_frontend/domain/models/user/user_model.dart';
 import 'package:conectar_frontend/domain/models/user_role/user_role_model.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,13 @@ class UserFormController extends ChangeNotifier {
   UserRole? get role => _role;
   setRole(UserRole? value) {
     _role = value;
+    notifyListeners();
+  }
+
+  List<Client> _selectedClients = [];
+  List<Client> get selectedClients => _selectedClients;
+  void setSelectedClients(List<Client> values) {
+    _selectedClients = values;
     notifyListeners();
   }
 

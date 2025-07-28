@@ -1,9 +1,14 @@
+import 'package:conectar_frontend/core/extensions/string_extension.dart';
+import 'package:conectar_frontend/domain/models/client/client_model.dart';
 import 'package:conectar_frontend/domain/models/user/user_model.dart';
 import 'package:conectar_frontend/domain/models/user_role/user_role_model.dart';
+import 'package:conectar_frontend/shared/widgets/custom_autocomplete.dart';
 import 'package:conectar_frontend/shared/widgets/custom_dropdown.dart';
 import 'package:conectar_frontend/shared/widgets/custom_input.dart';
+import 'package:conectar_frontend/ui/clients/viewmodel/clients_viewmodel.dart';
 import 'package:conectar_frontend/ui/users/widgets/user_form/user_form_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
 
 class UserForm extends StatefulWidget {
@@ -24,6 +29,7 @@ class UserForm extends StatefulWidget {
 
 class _UserFormState extends State<UserForm> {
   final ctrl = UserFormController();
+  final clientAutocompleteController = TextEditingController();
 
   @override
   void initState() {
@@ -33,6 +39,7 @@ class _UserFormState extends State<UserForm> {
 
   @override
   Widget build(BuildContext context) {
+    final clientViewmodel = context.read<ClientsViewmodel>();
     return Form(
       key: ctrl.formKey,
       child: ListenableBuilder(
@@ -114,6 +121,44 @@ class _UserFormState extends State<UserForm> {
                   return null;
                 },
               ),
+              CustomAutocomplete<Client>(
+                textEditingController: clientAutocompleteController,
+                debounceMs: 500,
+                onItemTitle: (value) => value.name ?? '-',
+                onItemSubtitle: (value) =>
+                    value.cnpj?.mask('##.###.###/####-##') ?? '-',
+                onSearch: (search) async {
+                  final clients = await clientViewmodel.search(search);
+
+                  return clients;
+                },
+                onSelected: (value) {
+                  if (!ctrl.selectedClients.any((e) => e.id == value.id)) {
+                    ctrl.setSelectedClients([...ctrl.selectedClients, value]);
+                    clientAutocompleteController.value = TextEditingValue.empty;
+                  }
+                },
+              ),
+              ...List.generate(ctrl.selectedClients.length, (index) {
+                final client = ctrl.selectedClients[index];
+                return ListTile(
+                  title: Text(client.name ?? '-'),
+                  subtitle: Text(
+                    client.cnpj?.mask('##.###.###/####-##') ?? '-',
+                  ),
+                  leading: IconButton(
+                    tooltip: 'Remover cliente',
+                    onPressed: () {
+                      ctrl.setSelectedClients(
+                        ctrl.selectedClients
+                            .where((e) => e.id != client.id)
+                            .toList(),
+                      );
+                    },
+                    icon: const Icon(Icons.close),
+                  ),
+                );
+              })
             ],
           );
         },

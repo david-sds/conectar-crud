@@ -186,4 +186,16 @@ class ClientsViewmodel extends ChangeNotifier {
     }
     return null;
   }
+
+  Future<List<Client>> search(String search) async {
+    final response = await _clientsRepository.findAll(
+      filters: ClientFilters(
+        nome: search,
+        cnpj: search,
+      ),
+      paginationInput: const PaginationInput(size: 8),
+    );
+
+    return response.$1;
+  }
 }

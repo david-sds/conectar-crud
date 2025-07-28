@@ -11,25 +11,27 @@ class CreateUserScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewmodel = context.read<UsersViewmodel>();
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: UserForm(
-            onCancel: () async {
-              GoRouter.of(context).go(Routes.users.path);
-            },
-            onSubmit: (user) async {
-              print(user);
-              final response = await viewmodel.create(user);
-
-              if (response?.id != null && context.mounted) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 800),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: UserForm(
+              onCancel: () async {
                 GoRouter.of(context).go(Routes.users.path);
-              }
-            },
+              },
+              onSubmit: (user) async {
+                final response = await viewmodel.create(user);
+
+                if (response?.id != null && context.mounted) {
+                  GoRouter.of(context).go(Routes.users.path);
+                }
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
