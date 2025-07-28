@@ -1,3 +1,5 @@
+import 'package:conectar_frontend/domain/converters/user_role_converter.dart';
+import 'package:conectar_frontend/domain/models/user_role/user_role_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'user_model.freezed.dart';
@@ -9,7 +11,7 @@ class User with _$User {
     int? id,
     String? name,
     String? email,
-    String? role,
+    @UserRoleConverter() UserRole? role,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _User;

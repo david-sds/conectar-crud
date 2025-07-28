@@ -22,7 +22,7 @@ ClientFilters _$ClientFiltersFromJson(Map<String, dynamic> json) {
 mixin _$ClientFilters {
   String? get nome => throw _privateConstructorUsedError;
   String? get cnpj => throw _privateConstructorUsedError;
-  ClientStatus? get status => throw _privateConstructorUsedError;
+  String? get status => throw _privateConstructorUsedError;
   bool? get conectaPlus => throw _privateConstructorUsedError;
 
   /// Serializes this ClientFilters to a JSON map.
@@ -41,8 +41,7 @@ abstract class $ClientFiltersCopyWith<$Res> {
           ClientFilters value, $Res Function(ClientFilters) then) =
       _$ClientFiltersCopyWithImpl<$Res, ClientFilters>;
   @useResult
-  $Res call(
-      {String? nome, String? cnpj, ClientStatus? status, bool? conectaPlus});
+  $Res call({String? nome, String? cnpj, String? status, bool? conectaPlus});
 }
 
 /// @nodoc
@@ -77,7 +76,7 @@ class _$ClientFiltersCopyWithImpl<$Res, $Val extends ClientFilters>
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as ClientStatus?,
+              as String?,
       conectaPlus: freezed == conectaPlus
           ? _value.conectaPlus
           : conectaPlus // ignore: cast_nullable_to_non_nullable
@@ -94,8 +93,7 @@ abstract class _$$ClientFiltersImplCopyWith<$Res>
       __$$ClientFiltersImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String? nome, String? cnpj, ClientStatus? status, bool? conectaPlus});
+  $Res call({String? nome, String? cnpj, String? status, bool? conectaPlus});
 }
 
 /// @nodoc
@@ -128,7 +126,7 @@ class __$$ClientFiltersImplCopyWithImpl<$Res>
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as ClientStatus?,
+              as String?,
       conectaPlus: freezed == conectaPlus
           ? _value.conectaPlus
           : conectaPlus // ignore: cast_nullable_to_non_nullable
@@ -151,7 +149,7 @@ class _$ClientFiltersImpl implements _ClientFilters {
   @override
   final String? cnpj;
   @override
-  final ClientStatus? status;
+  final String? status;
   @override
   final bool? conectaPlus;
 
@@ -196,7 +194,7 @@ abstract class _ClientFilters implements ClientFilters {
   const factory _ClientFilters(
       {final String? nome,
       final String? cnpj,
-      final ClientStatus? status,
+      final String? status,
       final bool? conectaPlus}) = _$ClientFiltersImpl;
 
   factory _ClientFilters.fromJson(Map<String, dynamic> json) =
@@ -207,7 +205,7 @@ abstract class _ClientFilters implements ClientFilters {
   @override
   String? get cnpj;
   @override
-  ClientStatus? get status;
+  String? get status;
   @override
   bool? get conectaPlus;
 

@@ -3,6 +3,7 @@ import 'package:conectar_frontend/core/routing/routes.dart';
 import 'package:conectar_frontend/domain/models/address/address_model.dart';
 import 'package:conectar_frontend/domain/models/client/client_model.dart';
 import 'package:conectar_frontend/domain/models/client_status/client_status_model.dart';
+import 'package:conectar_frontend/shared/widgets/custom_pagination.dart';
 import 'package:conectar_frontend/ui/clients/viewmodel/clients_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -41,97 +42,128 @@ class ClientsTable extends StatelessWidget {
       builder: (context, _) {
         final clients =
             viewmodel.isLoading ? loadingClients : viewmodel.clients;
-        if (viewmodel.clients.isEmpty && !viewmodel.isLoading) {
-          return const ListTile(
-            contentPadding: EdgeInsets.all(20),
-            title: Text('Nenhum cliente registrado'),
-            subtitle: Text(
-              'Registre um cliente clicando no '
-              'botão "novo" abaixo.',
-            ),
-            leading: Icon(
-              Icons.sentiment_dissatisfied,
-            ),
-          );
-        }
 
-        return Skeletonizer(
-          enabled: viewmodel.isLoading,
-          child: LayoutBuilder(builder: (context, constraints) {
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SizedBox(
-                width: constraints.maxWidth < 930 ? 930 : constraints.maxWidth,
-                child: DataTable(
-                  showCheckboxColumn: false,
-                  columns: const [
-                    DataColumn(
-                      label: Text('Razao social'),
-                    ),
-                    DataColumn(
-                      label: Text('CNPJ'),
-                    ),
-                    DataColumn(
-                      label: Text('Nome na fachada'),
-                    ),
-                    DataColumn(
-                      label: Text('Tags'),
-                    ),
-                    DataColumn(
-                      label: Text('Status'),
-                    ),
-                    DataColumn(
-                      label: Text('Conecta Plus'),
-                    ),
-                  ],
-                  rows: List.generate(
-                    clients.length,
-                    (index) {
-                      final client = clients[index];
-                      return DataRow(
-                        onSelectChanged: (_) {
-                          final clientId = client.id;
-                          if (clientId == null) {
-                            return;
-                          }
-                          GoRouter.of(context).pushNamed(
-                            Routes.clients.detailName,
-                            pathParameters: {
-                              'id': clientId.toString(),
-                            },
-                          );
-                        },
-                        cells: [
-                          DataCell(
-                            Text(client.name ?? '-'),
+        return Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ListenableBuilder(
+                  listenable: viewmodel,
+                  builder: (context, widget) {
+                    return CustomPagination(
+                      paginationOutput: viewmodel.paginationOutput,
+                      onChangePage: (pageNumber) async {
+                        await viewmodel.changePage(pageNumber);
+                      },
+                    );
+                  },
+                ),
+                OutlinedButton(
+                  onPressed: () {
+                    GoRouter.of(context).pushNamed(Routes.createClient.name);
+                  },
+                  child: const Text('Novo'),
+                ),
+              ],
+            ),
+            if (viewmodel.clients.isEmpty && !viewmodel.isLoading)
+              const ListTile(
+                contentPadding: EdgeInsets.all(20),
+                title: Text('Nenhum cliente registrado'),
+                subtitle: Text(
+                  'Registre um cliente clicando no '
+                  'botão "novo" abaixo.',
+                ),
+                leading: Icon(
+                  Icons.sentiment_dissatisfied,
+                ),
+              )
+            else
+              Skeletonizer(
+                enabled: viewmodel.isLoading,
+                child: LayoutBuilder(builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      width: constraints.maxWidth < 930
+                          ? 930
+                          : constraints.maxWidth,
+                      child: DataTable(
+                        showCheckboxColumn: false,
+                        columns: const [
+                          DataColumn(
+                            label: Text('Razao social'),
                           ),
-                          DataCell(
-                            Text(
-                              client.cnpj?.mask('##.###.###/####-##') ?? '-',
-                            ),
+                          DataColumn(
+                            label: Text('CNPJ'),
                           ),
-                          DataCell(
-                            Text(client.legalName ?? '-'),
+                          DataColumn(
+                            label: Text('Nome na fachada'),
                           ),
-                          const DataCell(
-                            Text('-'),
+                          DataColumn(
+                            label: Text('Tags'),
                           ),
-                          DataCell(
-                            Text(client.status?.label ?? '-'),
+                          DataColumn(
+                            label: Text('Status'),
                           ),
-                          DataCell(
-                            Text(
-                              (client.conectaPlus ?? false) ? 'Sim' : 'Não',
-                            ),
+                          DataColumn(
+                            label: Text('Conecta Plus'),
                           ),
                         ],
-                      );
-                    },
-                  ),
-                ),
+                        rows: List.generate(
+                          clients.length,
+                          (index) {
+                            final client = clients[index];
+                            return DataRow(
+                              onSelectChanged: (_) {
+                                final clientId = client.id;
+                                if (clientId == null) {
+                                  return;
+                                }
+                                GoRouter.of(context).pushNamed(
+                                  Routes.clients.detailName,
+                                  pathParameters: {
+                                    'id': clientId.toString(),
+                                  },
+                                );
+                              },
+                              cells: [
+                                DataCell(
+                                  Text(client.name ?? '-'),
+                                ),
+                                DataCell(
+                                  Text(
+                                    client.cnpj?.mask('##.###.###/####-##') ??
+                                        '-',
+                                  ),
+                                ),
+                                DataCell(
+                                  Text(client.legalName ?? '-'),
+                                ),
+                                const DataCell(
+                                  Text('-'),
+                                ),
+                                DataCell(
+                                  Text(client.status?.label ?? '-'),
+                                ),
+                                DataCell(
+                                  Text(
+                                    (client.conectaPlus ?? false)
+                                        ? 'Sim'
+                                        : 'Não',
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  );
+                }),
               ),
-            );
-          }),
+          ],
         );
       },
     );

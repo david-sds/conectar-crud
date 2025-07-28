@@ -26,6 +26,7 @@ dependencies:
   validators: ^3.0.0
   skeletonizer: ^2.1.0+1
   mask_text_input_formatter: ^2.9.0
+  collection: ^1.19.1
 
 dev_dependencies:
   flutter_test:

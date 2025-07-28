@@ -23,7 +23,8 @@ mixin _$User {
   int? get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
-  String? get role => throw _privateConstructorUsedError;
+  @UserRoleConverter()
+  UserRole? get role => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
 
@@ -45,7 +46,7 @@ abstract class $UserCopyWith<$Res> {
       {int? id,
       String? name,
       String? email,
-      String? role,
+      @UserRoleConverter() UserRole? role,
       DateTime? createdAt,
       DateTime? updatedAt});
 }
@@ -88,7 +89,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
       role: freezed == role
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as UserRole?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -112,7 +113,7 @@ abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
       {int? id,
       String? name,
       String? email,
-      String? role,
+      @UserRoleConverter() UserRole? role,
       DateTime? createdAt,
       DateTime? updatedAt});
 }
@@ -152,7 +153,7 @@ class __$$UserImplCopyWithImpl<$Res>
       role: freezed == role
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as UserRole?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -172,7 +173,7 @@ class _$UserImpl implements _User {
       {this.id,
       this.name,
       this.email,
-      this.role,
+      @UserRoleConverter() this.role,
       this.createdAt,
       this.updatedAt});
 
@@ -186,7 +187,8 @@ class _$UserImpl implements _User {
   @override
   final String? email;
   @override
-  final String? role;
+  @UserRoleConverter()
+  final UserRole? role;
   @override
   final DateTime? createdAt;
   @override
@@ -238,7 +240,7 @@ abstract class _User implements User {
       {final int? id,
       final String? name,
       final String? email,
-      final String? role,
+      @UserRoleConverter() final UserRole? role,
       final DateTime? createdAt,
       final DateTime? updatedAt}) = _$UserImpl;
 
@@ -251,7 +253,8 @@ abstract class _User implements User {
   @override
   String? get email;
   @override
-  String? get role;
+  @UserRoleConverter()
+  UserRole? get role;
   @override
   DateTime? get createdAt;
   @override

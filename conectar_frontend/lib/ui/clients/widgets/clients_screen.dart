@@ -1,12 +1,9 @@
-import 'package:conectar_frontend/core/routing/routes.dart';
 import 'package:conectar_frontend/domain/models/client_status/client_status_model.dart';
 import 'package:conectar_frontend/shared/widgets/custom_dropdown.dart';
 import 'package:conectar_frontend/shared/widgets/custom_input.dart';
-import 'package:conectar_frontend/shared/widgets/custom_pagination.dart';
 import 'package:conectar_frontend/ui/clients/viewmodel/clients_viewmodel.dart';
 import 'package:conectar_frontend/ui/clients/widgets/clients_table.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class ClientsScreen extends StatefulWidget {
@@ -107,39 +104,17 @@ class _ClientsScreenState extends State<ClientsScreen> {
             ],
           ),
         ),
-        Card(
+        const Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const ListTile(
+              ListTile(
                 title: Text('Clientes'),
                 subtitle: Text(
-                  'Selecione um usuário para editar suas informaçôes.',
+                  'Selecione um cliente para editar suas informaçôes.',
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ListenableBuilder(
-                    listenable: viewmodel,
-                    builder: (context, widget) {
-                      return CustomPagination(
-                        paginationOutput: viewmodel.paginationOutput,
-                        onChangePage: (pageNumber) async {
-                          await viewmodel.changePage(pageNumber);
-                        },
-                      );
-                    },
-                  ),
-                  OutlinedButton(
-                    onPressed: () {
-                      GoRouter.of(context).pushNamed(Routes.createClient.name);
-                    },
-                    child: const Text('Novo'),
-                  ),
-                ],
-              ),
-              const ClientsTable(),
+              ClientsTable(),
             ],
           ),
         ),

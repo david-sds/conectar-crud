@@ -9,7 +9,7 @@ class ClientFilters with _$ClientFilters {
   const factory ClientFilters({
     String? nome,
     String? cnpj,
-    ClientStatus? status,
+    String? status,
     bool? conectaPlus,
   }) = _ClientFilters;
 

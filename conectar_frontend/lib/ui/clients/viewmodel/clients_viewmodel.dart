@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:conectar_frontend/data/repositories/clients_repository.dart';
 import 'package:conectar_frontend/domain/models/client/client_model.dart';
 import 'package:conectar_frontend/domain/models/client_status/client_status_model.dart';
@@ -59,9 +60,10 @@ class ClientsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  ClientStatus? get statusFilter => _clientFilters.status;
-  void setStatusFilter(ClientStatus? value) {
-    _clientFilters = _clientFilters.copyWith(status: value);
+  ClientStatus? get statusFilter => ClientStatus.values
+      .firstWhereOrNull((status) => status.value == _clientFilters.status);
+  void setStatusFilter(ClientStatus? status) {
+    _clientFilters = _clientFilters.copyWith(status: status?.value);
     notifyListeners();
   }
 

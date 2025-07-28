@@ -18,6 +18,10 @@ enum Routes {
   users(
     name: 'users',
     path: '/users',
+  ),
+  createUser(
+    name: 'createUser',
+    path: '/users/new',
   );
 
   const Routes({
