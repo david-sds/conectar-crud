@@ -6,9 +6,12 @@ import {
   PaginateOutput,
   paginateOutput,
 } from 'src/core/utils/pagination/pagination.utils';
+import { ManageClientsDto } from '../clients/dto/manage-client.dto';
+import { UserDetailsDto } from './dto/user-details.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 import { UserDto } from './dto/user.dto';
-import { entityToUserDto } from './users.mapper';
+import { userDetailsInclude } from './include/user-details.include';
+import { entityToUserDetailsDto, entityToUserDto } from './users.mapper';
 
 const sortByTypes = ['id', 'name', 'email', 'role', 'createdAt', 'updatedAt'];
 
@@ -89,12 +92,13 @@ export class UsersRepository {
     return entities.map((e) => entityToUserDto(e));
   }
 
-  async findOne(id: number): Promise<UserDto> {
+  async findOne(id: number): Promise<UserDetailsDto> {
     const entity = await this.prismaService.user.findUnique({
       where: { id: id },
+      include: userDetailsInclude,
     });
 
-    return entityToUserDto(entity);
+    return entityToUserDetailsDto(entity);
   }
 
   async findOneByEmail(email: string): Promise<UserDto> {
@@ -143,36 +147,26 @@ export class UsersRepository {
     return entityToUserDto(entity);
   }
 
-  async addClientsToUser(userId: number, clientIds: number[]): Promise<number> {
-    const data: Prisma.UserClientCreateManyInput[] = clientIds.map(
-      (clientId) => ({
+  async updateClientsUser(userId: number, payload: ManageClientsDto) {
+    const createManyArgs: Prisma.UserClientCreateManyArgs = {
+      data: payload.addClientIds.map((clientId) => ({
         clientId: clientId,
         userId: userId,
-      }),
-    );
-
-    const result = await this.prismaService.userClient.createMany({
-      data: data,
-      skipDuplicates: true,
-    });
-
-    return result.count;
-  }
-
-  async removeClientsFromUser(
-    userId: number,
-    clientIds: number[],
-  ): Promise<number> {
-    const result = await this.prismaService.userClient.deleteMany({
+      })),
+    };
+    const removeManyArgs: Prisma.UserClientDeleteManyArgs = {
       where: {
         clientId: {
-          in: clientIds,
+          in: payload.removeClientIds,
         },
         userId: userId,
       },
-    });
+    };
 
-    return result.count;
+    await this.prismaService.$transaction(async (prisma) => {
+      await prisma.userClient.deleteMany(removeManyArgs);
+      await prisma.userClient.createMany(createManyArgs);
+    });
   }
 
   async isClientFromUser(clientId: number, userId: number): Promise<boolean> {

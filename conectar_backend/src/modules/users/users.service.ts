@@ -6,6 +6,8 @@ import {
   isPrismaKnownError,
 } from 'src/core/utils/prisma-error-handler.util';
 import { TokenDecodeDto } from '../auth/dto/token-decode.dto';
+import { ManageClientsDto } from '../clients/dto/manage-client.dto';
+import { UserDetailsDto } from './dto/user-details.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 import { UserDto } from './dto/user.dto';
 import { UsersRepository } from './users.repository';
@@ -22,7 +24,7 @@ export class UsersService {
     return await this.usersRepository.findInactiveUsers(30);
   }
 
-  async findOne(id: number): Promise<UserDto> {
+  async findOne(id: number): Promise<UserDetailsDto> {
     try {
       const user = await this.usersRepository.findOne(id);
 
@@ -89,26 +91,9 @@ export class UsersService {
     }
   }
 
-  async addClientsToUser(userId: number, clientIds: number[]): Promise<number> {
+  async updateClientsUser(userId: number, payload: ManageClientsDto) {
     try {
-      return await this.usersRepository.addClientsToUser(userId, clientIds);
-    } catch (e) {
-      if (isPrismaKnownError(e)) {
-        handlePrismaError(e);
-      }
-      throw e;
-    }
-  }
-
-  async removeClientsFromUser(
-    userId: number,
-    clientIds: number[],
-  ): Promise<number> {
-    try {
-      return await this.usersRepository.removeClientsFromUser(
-        userId,
-        clientIds,
-      );
+      return await this.usersRepository.updateClientsUser(userId, payload);
     } catch (e) {
       if (isPrismaKnownError(e)) {
         handlePrismaError(e);

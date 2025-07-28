@@ -1,10 +1,16 @@
 import { Type } from 'class-transformer';
-import { ArrayNotEmpty, IsArray, IsInt } from 'class-validator';
+import { IsArray, IsInt, IsOptional } from 'class-validator';
 
 export class ManageClientsDto {
+  @IsOptional()
   @IsArray()
-  @ArrayNotEmpty()
   @Type(() => Number)
   @IsInt({ each: true })
-  clientIds: number[];
+  addClientIds: number[];
+
+  @IsOptional()
+  @IsArray()
+  @Type(() => Number)
+  @IsInt({ each: true })
+  removeClientIds: number[];
 }

@@ -17,6 +17,7 @@ import { Roles } from 'src/core/decorators/roles.decorator';
 import { jwtDecode } from 'src/core/utils/jwt.utils';
 import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
 import { ManageClientsDto } from '../clients/dto/manage-client.dto';
+import { UserDetailsDto } from './dto/user-details.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 import { UserDto } from './dto/user.dto';
 import { UsersService } from './users.service';
@@ -33,7 +34,7 @@ export class UsersController {
 
   @Roles(Role.ADMIN, Role.USER)
   @Get('me')
-  findMe(@Req() req: Request): Promise<UserDto> {
+  findMe(@Req() req: Request): Promise<UserDetailsDto> {
     const tokenDecodeDto = jwtDecode(req);
     return this.usersService.findOne(tokenDecodeDto.sub);
   }
@@ -46,7 +47,7 @@ export class UsersController {
 
   @Roles(Role.ADMIN)
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<UserDto> {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<UserDetailsDto> {
     return this.usersService.findOne(id);
   }
 
@@ -76,20 +77,11 @@ export class UsersController {
   }
 
   @Roles(Role.ADMIN)
-  @Patch('add-to-user/:id')
-  addClientsToUser(
+  @Patch('update-clients/:id')
+  updateClientsUser(
     @Param('id', ParseIntPipe) userId: number,
     @Body() payload: ManageClientsDto,
-  ): Promise<number> {
-    return this.usersService.addClientsToUser(userId, payload.clientIds);
-  }
-
-  @Roles(Role.ADMIN)
-  @Patch('remove-from-user/:id')
-  removeClientsFromUser(
-    @Param('id', ParseIntPipe) userId: number,
-    @Body() payload: ManageClientsDto,
-  ): Promise<number> {
-    return this.usersService.removeClientsFromUser(userId, payload.clientIds);
+  ) {
+    return this.usersService.updateClientsUser(userId, payload);
   }
 }
