@@ -91,46 +91,4 @@ export class ClientsService {
       throw e;
     }
   }
-
-  async addClientsToUser(userId: number, clientIds: number[]): Promise<number> {
-    try {
-      return await this.clientsRepository.addClientsToUser(userId, clientIds);
-    } catch (e) {
-      if (isPrismaKnownError(e)) {
-        handlePrismaError(e);
-      }
-      throw e;
-    }
-  }
-
-  async removeClientsFromUser(
-    userId: number,
-    clientIds: number[],
-  ): Promise<number> {
-    try {
-      return await this.clientsRepository.removeClientsFromUser(
-        userId,
-        clientIds,
-      );
-    } catch (e) {
-      if (isPrismaKnownError(e)) {
-        handlePrismaError(e);
-      }
-      throw e;
-    }
-  }
-
-  async canEditClient(
-    clientId: number,
-    tokenDecode: TokenDecodeDto,
-  ): Promise<boolean> {
-    if (tokenDecode.role === Role.ADMIN) {
-      return true;
-    }
-
-    return await this.clientsRepository.isClientFromUser(
-      clientId,
-      tokenDecode.sub,
-    );
-  }
 }

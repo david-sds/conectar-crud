@@ -19,7 +19,6 @@ import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
 import { ClientsService } from './clients.service';
 import { ClientQueryDto } from './dto/client-query.dto';
 import { ClientDto } from './dto/client.dto';
-import { ManageClientsDto } from './dto/manage-client.dto';
 
 @Controller('clients')
 export class ClientsController {
@@ -73,23 +72,5 @@ export class ClientsController {
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id: number): Promise<ClientDto> {
     return this.clientsService.delete(id);
-  }
-
-  @Roles(Role.ADMIN)
-  @Patch('add-to-user/:id')
-  addClientsToUser(
-    @Param('id', ParseIntPipe) userId: number,
-    @Body() payload: ManageClientsDto,
-  ): Promise<number> {
-    return this.clientsService.addClientsToUser(userId, payload.clientIds);
-  }
-
-  @Roles(Role.ADMIN)
-  @Patch('remove-from-user/:id')
-  removeClientsFromUser(
-    @Param('id', ParseIntPipe) userId: number,
-    @Body() payload: ManageClientsDto,
-  ): Promise<number> {
-    return this.clientsService.removeClientsFromUser(userId, payload.clientIds);
   }
 }

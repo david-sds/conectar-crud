@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Role } from 'generated/prisma';
 import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
 import {
   handlePrismaError,
   isPrismaKnownError,
 } from 'src/core/utils/prisma-error-handler.util';
+import { TokenDecodeDto } from '../auth/dto/token-decode.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 import { UserDto } from './dto/user.dto';
 import { UsersRepository } from './users.repository';
@@ -85,5 +87,47 @@ export class UsersService {
       }
       throw e;
     }
+  }
+
+  async addClientsToUser(userId: number, clientIds: number[]): Promise<number> {
+    try {
+      return await this.usersRepository.addClientsToUser(userId, clientIds);
+    } catch (e) {
+      if (isPrismaKnownError(e)) {
+        handlePrismaError(e);
+      }
+      throw e;
+    }
+  }
+
+  async removeClientsFromUser(
+    userId: number,
+    clientIds: number[],
+  ): Promise<number> {
+    try {
+      return await this.usersRepository.removeClientsFromUser(
+        userId,
+        clientIds,
+      );
+    } catch (e) {
+      if (isPrismaKnownError(e)) {
+        handlePrismaError(e);
+      }
+      throw e;
+    }
+  }
+
+  async canEditClient(
+    clientId: number,
+    tokenDecode: TokenDecodeDto,
+  ): Promise<boolean> {
+    if (tokenDecode.role === Role.ADMIN) {
+      return true;
+    }
+
+    return await this.usersRepository.isClientFromUser(
+      clientId,
+      tokenDecode.sub,
+    );
   }
 }

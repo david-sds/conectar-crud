@@ -16,6 +16,7 @@ import { Request } from 'express';
 import { Roles } from 'src/core/decorators/roles.decorator';
 import { jwtDecode } from 'src/core/utils/jwt.utils';
 import { PaginateOutput } from 'src/core/utils/pagination/pagination.utils';
+import { ManageClientsDto } from '../clients/dto/manage-client.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 import { UserDto } from './dto/user.dto';
 import { UsersService } from './users.service';
@@ -72,5 +73,23 @@ export class UsersController {
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id: number): Promise<UserDto> {
     return this.usersService.delete(id);
+  }
+
+  @Roles(Role.ADMIN)
+  @Patch('add-to-user/:id')
+  addClientsToUser(
+    @Param('id', ParseIntPipe) userId: number,
+    @Body() payload: ManageClientsDto,
+  ): Promise<number> {
+    return this.usersService.addClientsToUser(userId, payload.clientIds);
+  }
+
+  @Roles(Role.ADMIN)
+  @Patch('remove-from-user/:id')
+  removeClientsFromUser(
+    @Param('id', ParseIntPipe) userId: number,
+    @Body() payload: ManageClientsDto,
+  ): Promise<number> {
+    return this.usersService.removeClientsFromUser(userId, payload.clientIds);
   }
 }

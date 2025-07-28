@@ -239,49 +239,4 @@ export class ClientsRepository {
 
     return entityToClientDto(entity);
   }
-
-  async addClientsToUser(userId: number, clientIds: number[]): Promise<number> {
-    const data: Prisma.UserClientCreateManyInput[] = clientIds.map(
-      (clientId) => ({
-        clientId: clientId,
-        userId: userId,
-      }),
-    );
-
-    const result = await this.prismaService.userClient.createMany({
-      data: data,
-      skipDuplicates: true,
-    });
-
-    return result.count;
-  }
-
-  async removeClientsFromUser(
-    userId: number,
-    clientIds: number[],
-  ): Promise<number> {
-    const result = await this.prismaService.userClient.deleteMany({
-      where: {
-        clientId: {
-          in: clientIds,
-        },
-        userId: userId,
-      },
-    });
-
-    return result.count;
-  }
-
-  async isClientFromUser(clientId: number, userId: number): Promise<boolean> {
-    const result = await this.prismaService.userClient.findUnique({
-      where: {
-        userId_clientId: {
-          clientId: clientId,
-          userId: userId,
-        },
-      },
-    });
-
-    return result !== null;
-  }
 }
