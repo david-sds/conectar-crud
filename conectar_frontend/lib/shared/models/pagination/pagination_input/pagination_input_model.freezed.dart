@@ -23,7 +23,8 @@ mixin _$PaginationInput {
   int? get page => throw _privateConstructorUsedError;
   int? get size => throw _privateConstructorUsedError;
   String? get sortBy => throw _privateConstructorUsedError;
-  String? get order => throw _privateConstructorUsedError;
+  @OrderConverter()
+  Order? get order => throw _privateConstructorUsedError;
   String? get search => throw _privateConstructorUsedError;
 
   /// Serializes this PaginationInput to a JSON map.
@@ -43,7 +44,11 @@ abstract class $PaginationInputCopyWith<$Res> {
       _$PaginationInputCopyWithImpl<$Res, PaginationInput>;
   @useResult
   $Res call(
-      {int? page, int? size, String? sortBy, String? order, String? search});
+      {int? page,
+      int? size,
+      String? sortBy,
+      @OrderConverter() Order? order,
+      String? search});
 }
 
 /// @nodoc
@@ -83,7 +88,7 @@ class _$PaginationInputCopyWithImpl<$Res, $Val extends PaginationInput>
       order: freezed == order
           ? _value.order
           : order // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as Order?,
       search: freezed == search
           ? _value.search
           : search // ignore: cast_nullable_to_non_nullable
@@ -101,7 +106,11 @@ abstract class _$$PaginationInputImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int? page, int? size, String? sortBy, String? order, String? search});
+      {int? page,
+      int? size,
+      String? sortBy,
+      @OrderConverter() Order? order,
+      String? search});
 }
 
 /// @nodoc
@@ -139,7 +148,7 @@ class __$$PaginationInputImplCopyWithImpl<$Res>
       order: freezed == order
           ? _value.order
           : order // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as Order?,
       search: freezed == search
           ? _value.search
           : search // ignore: cast_nullable_to_non_nullable
@@ -152,7 +161,11 @@ class __$$PaginationInputImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PaginationInputImpl implements _PaginationInput {
   const _$PaginationInputImpl(
-      {this.page, this.size, this.sortBy, this.order, this.search});
+      {this.page,
+      this.size,
+      this.sortBy,
+      @OrderConverter() this.order,
+      this.search});
 
   factory _$PaginationInputImpl.fromJson(Map<String, dynamic> json) =>
       _$$PaginationInputImplFromJson(json);
@@ -164,7 +177,8 @@ class _$PaginationInputImpl implements _PaginationInput {
   @override
   final String? sortBy;
   @override
-  final String? order;
+  @OrderConverter()
+  final Order? order;
   @override
   final String? search;
 
@@ -212,7 +226,7 @@ abstract class _PaginationInput implements PaginationInput {
       {final int? page,
       final int? size,
       final String? sortBy,
-      final String? order,
+      @OrderConverter() final Order? order,
       final String? search}) = _$PaginationInputImpl;
 
   factory _PaginationInput.fromJson(Map<String, dynamic> json) =
@@ -225,7 +239,8 @@ abstract class _PaginationInput implements PaginationInput {
   @override
   String? get sortBy;
   @override
-  String? get order;
+  @OrderConverter()
+  Order? get order;
   @override
   String? get search;
 

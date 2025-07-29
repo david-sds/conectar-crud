@@ -34,9 +34,9 @@ class ClientsViewmodel extends ChangeNotifier {
 
   PaginationInput _paginationInput = const PaginationInput();
   PaginationInput get paginationInput => _paginationInput;
-  void setPaginationInput(PaginationInput value) {
+  void setPaginationInput(PaginationInput value) async {
     _paginationInput = value;
-    notifyListeners();
+    await load();
   }
 
   Future<void> changePage(int pageNumber) async {

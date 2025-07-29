@@ -1,8 +1,10 @@
+import 'package:collection/collection.dart';
 import 'package:conectar_frontend/core/extensions/string_extension.dart';
 import 'package:conectar_frontend/core/routing/routes.dart';
 import 'package:conectar_frontend/domain/models/address/address_model.dart';
 import 'package:conectar_frontend/domain/models/client/client_model.dart';
 import 'package:conectar_frontend/domain/models/client_status/client_status_model.dart';
+import 'package:conectar_frontend/shared/models/pagination/order/order_model.dart';
 import 'package:conectar_frontend/shared/widgets/custom_pagination.dart';
 import 'package:conectar_frontend/ui/clients/viewmodel/clients_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +32,38 @@ final loadingClients = List.generate(
     ),
   ),
 );
+
+enum ClientTableColumns {
+  razaoSocial(
+    label: 'Razao social',
+    value: 'name',
+  ),
+  cnpj(
+    label: 'CNPJ',
+    value: 'cnpj',
+  ),
+  nomeNaFachada(
+    label: 'Nome na fachada',
+    value: 'legalName',
+  ),
+  tags(
+    label: 'Tags',
+    value: 'tags',
+  ),
+  status(
+    label: 'Status',
+    value: 'status',
+  ),
+  conectaPlus(
+    label: 'Conecta Plus',
+    value: 'conectaPlus',
+  );
+
+  const ClientTableColumns({required this.label, required this.value});
+
+  final String label;
+  final String value;
+}
 
 class ClientsTable extends StatelessWidget {
   const ClientsTable({super.key});
@@ -92,26 +126,27 @@ class ClientsTable extends StatelessWidget {
                           : constraints.maxWidth,
                       child: DataTable(
                         showCheckboxColumn: false,
-                        columns: const [
-                          DataColumn(
-                            label: Text('Razao social'),
-                          ),
-                          DataColumn(
-                            label: Text('CNPJ'),
-                          ),
-                          DataColumn(
-                            label: Text('Nome na fachada'),
-                          ),
-                          DataColumn(
-                            label: Text('Tags'),
-                          ),
-                          DataColumn(
-                            label: Text('Status'),
-                          ),
-                          DataColumn(
-                            label: Text('Conecta Plus'),
-                          ),
-                        ],
+                        sortAscending:
+                            viewmodel.paginationInput.order == Order.asc,
+                        sortColumnIndex: ClientTableColumns.values
+                            .firstWhereOrNull((e) =>
+                                e.value == viewmodel.paginationInput.sortBy)
+                            ?.index,
+                        columns: ClientTableColumns.values
+                            .map(
+                              (e) => DataColumn(
+                                label: Text(e.label),
+                                onSort: (_, ascending) {
+                                  viewmodel.setPaginationInput(
+                                    viewmodel.paginationInput.copyWith(
+                                      order: ascending ? Order.asc : Order.desc,
+                                      sortBy: e.value,
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
                         rows: List.generate(
                           clients.length,
                           (index) {

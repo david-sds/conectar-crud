@@ -1,6 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:conectar_frontend/core/routing/routes.dart';
 import 'package:conectar_frontend/domain/models/user/user_model.dart';
 import 'package:conectar_frontend/domain/models/user_role/user_role_model.dart';
+import 'package:conectar_frontend/shared/models/pagination/order/order_model.dart';
 import 'package:conectar_frontend/shared/widgets/custom_pagination.dart';
 import 'package:conectar_frontend/ui/users/viewmodel/users_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,29 @@ final loadingUsers = List.generate(
     role: UserRole.user,
   ),
 );
+
+enum UserTableColumns {
+  nome(
+    value: 'name',
+    label: 'Nome',
+  ),
+  email(
+    value: 'email',
+    label: 'Email',
+  ),
+  cargo(
+    value: 'role',
+    label: 'Cargo',
+  );
+
+  const UserTableColumns({
+    required this.value,
+    required this.label,
+  });
+
+  final String value;
+  final String label;
+}
 
 class UsersTable extends StatelessWidget {
   const UsersTable({super.key});
@@ -77,17 +102,27 @@ class UsersTable extends StatelessWidget {
                           : constraints.maxWidth,
                       child: DataTable(
                         showCheckboxColumn: false,
-                        columns: const [
-                          DataColumn(
-                            label: Text('Nome'),
-                          ),
-                          DataColumn(
-                            label: Text('Email'),
-                          ),
-                          DataColumn(
-                            label: Text('Cargo'),
-                          ),
-                        ],
+                        sortAscending:
+                            viewmodel.paginationInput.order == Order.asc,
+                        sortColumnIndex: UserTableColumns.values
+                            .firstWhereOrNull((e) =>
+                                e.value == viewmodel.paginationInput.sortBy)
+                            ?.index,
+                        columns: UserTableColumns.values
+                            .map(
+                              (e) => DataColumn(
+                                label: Text(e.label),
+                                onSort: (_, ascending) {
+                                  viewmodel.setPaginationInput(
+                                    viewmodel.paginationInput.copyWith(
+                                      order: ascending ? Order.asc : Order.desc,
+                                      sortBy: e.value,
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                            .toList(),
                         rows: List.generate(
                           users.length,
                           (index) {

@@ -12,7 +12,8 @@ _$PaginationInputImpl _$$PaginationInputImplFromJson(
       page: (json['page'] as num?)?.toInt(),
       size: (json['size'] as num?)?.toInt(),
       sortBy: json['sortBy'] as String?,
-      order: json['order'] as String?,
+      order: _$JsonConverterFromJson<String, Order>(
+          json['order'], const OrderConverter().fromJson),
       search: json['search'] as String?,
     );
 
@@ -22,6 +23,19 @@ Map<String, dynamic> _$$PaginationInputImplToJson(
       'page': instance.page,
       'size': instance.size,
       'sortBy': instance.sortBy,
-      'order': instance.order,
+      'order': _$JsonConverterToJson<String, Order>(
+          instance.order, const OrderConverter().toJson),
       'search': instance.search,
     };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) =>
+    value == null ? null : toJson(value);
