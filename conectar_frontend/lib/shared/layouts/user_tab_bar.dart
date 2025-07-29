@@ -21,7 +21,6 @@ class UserTabBarState extends State<UserTabBar>
       length: userTabs.length,
       vsync: this,
     );
-
     final path =
         GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
 

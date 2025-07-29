@@ -32,6 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         Card(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const ListTile(
                 title: Text('Perfil'),

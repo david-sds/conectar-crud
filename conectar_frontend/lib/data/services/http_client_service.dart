@@ -1,6 +1,9 @@
+import 'package:conectar_frontend/core/routing/router.dart';
+import 'package:conectar_frontend/core/routing/routes.dart';
 import 'package:conectar_frontend/data/repositories/auth_repository.dart';
 import 'package:conectar_frontend/data/services/token_service.dart';
 import 'package:dio/dio.dart';
+import 'package:go_router/go_router.dart';
 
 final _tokenService = TokenService();
 
@@ -66,7 +69,12 @@ class HttpClient {
               );
               return handler.resolve(cloned);
             } catch (e) {
-              await _authRepository.logout();
+              final success = await _authRepository.logout();
+
+              final context = goRouterKey.currentState?.context;
+              if (success && (context?.mounted ?? false)) {
+                context?.goNamed(Routes.login.name);
+              }
 
               return handler.reject(e as DioException);
             }

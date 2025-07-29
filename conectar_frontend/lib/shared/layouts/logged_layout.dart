@@ -44,37 +44,59 @@ class LoggedLayout extends StatefulWidget {
 }
 
 class _LoggedLayoutState extends State<LoggedLayout> {
+  UserRole? userRole;
+
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final vm = context.read<AuthViewmodel>();
-      vm.loadTokenDecode();
+      final tokenDecode = await vm.loadTokenDecode();
+      userRole = tokenDecode?.role;
+
+      setState(() {
+        userRole = tokenDecode?.role;
+      });
     });
     super.initState();
+  }
+
+  Widget? get tabBar {
+    switch (userRole) {
+      case UserRole.admin:
+        return const AdminTabBar();
+      case UserRole.user:
+        return const UserTabBar();
+      default:
+        return null;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final authViewmodel = context.read<AuthViewmodel>();
+    final tabBar_ = tabBar;
 
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size(double.infinity, kToolbarHeight),
         child: ListenableBuilder(
-            listenable: authViewmodel,
-            builder: (context, _) {
-              return CustomAppBar(
-                tabBar: authViewmodel.tokenDecode?.role == UserRole.admin
-                    ? const AdminTabBar()
-                    : const UserTabBar(),
-                onLogout: () async {
-                  final isLoggedOut = await authViewmodel.logout();
-                  if (isLoggedOut && context.mounted) {
-                    GoRouter.of(context).goNamed(Routes.login.name);
-                  }
-                },
-              );
-            }),
+          listenable: authViewmodel,
+          builder: (context, _) {
+            if (tabBar_ == null) {
+              return const SizedBox();
+            }
+
+            return CustomAppBar(
+              tabBar: tabBar_,
+              onLogout: () async {
+                final isLoggedOut = await authViewmodel.logout();
+                if (isLoggedOut && context.mounted) {
+                  GoRouter.of(context).goNamed(Routes.login.name);
+                }
+              },
+            );
+          },
+        ),
       ),
       body: Container(
         color: Theme.of(context).colorScheme.surface,

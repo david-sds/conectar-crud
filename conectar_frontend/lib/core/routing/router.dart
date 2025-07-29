@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final _guards = Guards();
+final goRouterKey = GlobalKey<NavigatorState>();
 
 final _loggedStack = ShellRoute(
   builder: (context, state, child) {
@@ -108,19 +109,14 @@ final _notLoggedStack = ShellRoute(
   ],
 );
 
-GoRouter createRouter(BuildContext context) {
-  return GoRouter(
-    routes: [
-      GoRoute(
-        name: Routes.initial.name,
-        path: Routes.initial.path,
-        redirect: (context, state) => Routes.login.path,
-      ),
-      _loggedStack,
-      _notLoggedStack,
-    ],
-    errorBuilder: (context, state) => const LoggedLayout(
-      child: NotFoundScreen(),
-    ),
-  );
-}
+GoRouter router = GoRouter(
+  navigatorKey: goRouterKey,
+  initialLocation: Routes.initial.path,
+  routes: [
+    _loggedStack,
+    _notLoggedStack,
+  ],
+  errorBuilder: (context, state) => const LoggedLayout(
+    child: NotFoundScreen(),
+  ),
+);

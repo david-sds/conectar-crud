@@ -120,6 +120,7 @@ class AuthViewmodel extends ChangeNotifier {
   TokenDecode? get tokenDecode => _tokenDecode;
   void setTokenDecode(TokenDecode? value) {
     _tokenDecode = value;
+    _isLoggedIn = value != null;
     notifyListeners();
   }
 
