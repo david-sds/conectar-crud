@@ -32,18 +32,18 @@ flutter run -d chrome
 ## Arquitetura
 
 - **Backend**
-    NestJS modularizado
-    Injeção de dependências.
-    Prisma ORM com PostgreSQL, usando Migrations.
-    Docker Compose para ambiente local.
-    Validação com DTOs e use cases separados de controllers.
+    - NestJS modularizado
+    - Injeção de dependências.
+    - Prisma ORM com PostgreSQL, usando Migrations.
+    - Docker Compose para ambiente local.
+    - Validação com DTOs e use cases separados de controllers.
 
 - **Frontend**
-    Flutter Web com arquitetura MVVM.
-    Injeção de dependências.
-    Gerenciamento de estado via Provider + ChangeNotifier.
-    Utilização de Freezed e build_runner para gerar modelos imutáveis.
-    GoRouter para navegação declarativa com guards.
+    - Flutter Web com arquitetura MVVM.
+    - Injeção de dependências.
+    - Gerenciamento de estado via Provider + ChangeNotifier.
+    - Utilização de Freezed e build_runner para gerar modelos imutáveis.
+    - GoRouter para navegação declarativa com guards.
 
 - **Autenticação**
     Backend gera JWT, armazenado no frontend.
