@@ -10,7 +10,7 @@ Este repositório contém dois projetos:
 - **conectar_frontend** – Aplicação Flutter com Provider, seguindo a arquitetura MVVM.
 
 A documentação das APIs foi realizada pelo Postman, a collection e o environment podem ser encontrados na raiz do repositório.
-Existe um endpoint desprotegido de propósito para facilitar o acesso ao sistema localmente (POST /api/auth/register), ele pode ser enviado para criar um usuário administrador.
+Existe um endpoint desprotegido de propósito para facilitar o acesso ao sistema localmente (`POST /api/auth/register`), ele pode ser enviado para criar um usuário administrador.
 
 ## Como rodar localmente
 
