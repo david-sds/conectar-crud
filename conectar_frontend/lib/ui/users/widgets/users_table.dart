@@ -33,19 +33,8 @@ class UsersTable extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  ListenableBuilder(
-                    listenable: viewmodel,
-                    builder: (context, widget) {
-                      return CustomPagination(
-                        paginationOutput: viewmodel.paginationOutput,
-                        onChangePage: (pageNumber) async {
-                          await viewmodel.changePage(pageNumber);
-                        },
-                      );
-                    },
-                  ),
-                  const Spacer(),
                   OutlinedButton(
                     onPressed: () {
                       GoRouter.of(context).pushNamed(Routes.createUser.name);
@@ -135,6 +124,25 @@ class UsersTable extends StatelessWidget {
                   );
                 }),
               ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ListenableBuilder(
+                    listenable: viewmodel,
+                    builder: (context, widget) {
+                      return CustomPagination(
+                        paginationOutput: viewmodel.paginationOutput,
+                        onChangePage: (pageNumber) async {
+                          await viewmodel.changePage(pageNumber);
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            )
           ],
         );
       },

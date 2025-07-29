@@ -14,7 +14,7 @@ class ProfileInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
           padding: const EdgeInsets.all(36.0),
@@ -32,37 +32,43 @@ class ProfileInfo extends StatelessWidget {
               const SizedBox(
                 width: 8,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    userDetails.name ?? '-',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      userDetails.name ?? '-',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  Text(
-                    userDetails.email ?? '-',
-                    style: const TextStyle(
-                      fontSize: 16,
+                    Text(
+                      userDetails.email ?? '-',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  Text(
-                    userDetails.role?.label ?? '-',
-                    style: const TextStyle(
-                      fontSize: 16,
+                    Text(
+                      userDetails.role?.label ?? '-',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  Text(
-                    userDetails.createdAt != null
-                        ? 'Conta criada em ${DateFormat("dd/MM/yyyy 'às' HH:mm", 'pt_BR').format(userDetails.createdAt!.toLocal())}'
-                        : '',
-                    style: const TextStyle(
-                      fontSize: 16,
+                    Text(
+                      userDetails.createdAt != null
+                          ? 'Conta criada em ${DateFormat("dd/MM/yyyy 'às' HH:mm", 'pt_BR').format(userDetails.createdAt!.toLocal())}'
+                          : '',
+                      softWrap: true,
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               )
             ],
           ),

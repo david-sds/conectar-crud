@@ -27,9 +27,20 @@ class _UsersScreenState extends State<UsersScreen> {
     super.initState();
   }
 
+  Widget _flexWrapper(bool isHorizontal, Widget child) {
+    return isHorizontal
+        ? Flexible(child: child)
+        : Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: child,
+          );
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewmodel = context.read<UsersViewmodel>();
+    final isHorizontalFilters = MediaQuery.sizeOf(context).width > 700;
+
     return Column(
       children: [
         Card(
@@ -45,26 +56,31 @@ class _UsersScreenState extends State<UsersScreen> {
               ListenableBuilder(
                   listenable: viewmodel,
                   builder: (context, widget) {
-                    return Row(
+                    return Flex(
+                      direction:
+                          isHorizontalFilters ? Axis.horizontal : Axis.vertical,
                       children: [
-                        Flexible(
-                          child: CustomInput(
+                        _flexWrapper(
+                          isHorizontalFilters,
+                          CustomInput(
                             controller: _nomeController,
                             labelText: 'Buscar por nome',
                             onChanged: viewmodel.setNameFilter,
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Flexible(
-                          child: CustomInput(
+                        _flexWrapper(
+                          isHorizontalFilters,
+                          CustomInput(
                             controller: _emailController,
                             labelText: 'Buscar por email',
                             onChanged: viewmodel.setEmailFilter,
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Flexible(
-                          child: CustomDropdown<UserRole?>(
+                        _flexWrapper(
+                          isHorizontalFilters,
+                          CustomDropdown<UserRole?>(
                             labelText: 'Buscar por cargo',
                             itemLabel: (value) => value?.label,
                             items: UserRole.values,
