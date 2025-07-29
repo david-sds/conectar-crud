@@ -1,5 +1,7 @@
 import 'package:conectar_frontend/core/routing/routes.dart';
 import 'package:conectar_frontend/domain/models/user_role/user_role_model.dart';
+import 'package:conectar_frontend/shared/layouts/admin_tab_bar.dart';
+import 'package:conectar_frontend/shared/layouts/user_tab_bar.dart';
 import 'package:conectar_frontend/shared/widgets/custom_app_bar.dart';
 import 'package:conectar_frontend/ui/auth/viewmodel/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -29,9 +31,6 @@ enum AppBarTabs {
   final Routes route;
 }
 
-final adminTabs = [AppBarTabs.clients, AppBarTabs.users, AppBarTabs.profile];
-final userTabs = [AppBarTabs.clients, AppBarTabs.profile];
-
 class LoggedLayout extends StatefulWidget {
   const LoggedLayout({
     required this.child,
@@ -44,85 +43,53 @@ class LoggedLayout extends StatefulWidget {
   State<LoggedLayout> createState() => _LoggedLayoutState();
 }
 
-class _LoggedLayoutState extends State<LoggedLayout>
-    with SingleTickerProviderStateMixin {
-  late List<AppBarTabs> tabs;
-  late TabController _tabController;
-  bool isLoading = true;
-
+class _LoggedLayoutState extends State<LoggedLayout> {
   @override
   void initState() {
-    super.initState();
-    _initTabs();
-  }
-
-  Future<void> _initTabs() async {
-    final vm = context.read<AuthViewmodel>();
-    final loggedUser = await vm.findMe();
-
-    if (!mounted) return;
-
-    tabs = loggedUser?.role == UserRole.admin ? adminTabs : userTabs;
-
-    _tabController = TabController(
-      length: tabs.length,
-      vsync: this,
-    );
-
-    final path =
-        GoRouter.of(context).routerDelegate.currentConfiguration.fullPath;
-
-    final index = tabs.indexWhere((tab) => path.startsWith(tab.route.path));
-    _tabController.index = index >= 0 ? index : 0;
-
-    setState(() {
-      isLoading = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final vm = context.read<AuthViewmodel>();
+      vm.loadTokenDecode();
     });
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final authViewmodel = context.read<AuthViewmodel>();
 
-    if (isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size(double.infinity, kToolbarHeight),
-        child: CustomAppBar(
-          tabBar: TabBar(
-            controller: _tabController,
-            dividerColor: Colors.transparent,
-            onTap: (index) {
-              final tab = tabs[index];
-              GoRouter.of(context).pushNamed(tab.route.name);
-            },
-            tabs: tabs.map((e) => Tab(text: e.label)).toList(),
-          ),
-          onLogout: () async {
-            final isLoggedOut = await authViewmodel.logout();
-            if (isLoggedOut && context.mounted) {
-              GoRouter.of(context).goNamed(Routes.login.name);
-            }
-          },
-        ),
+        child: ListenableBuilder(
+            listenable: authViewmodel,
+            builder: (context, _) {
+              return CustomAppBar(
+                tabBar: authViewmodel.tokenDecode?.role == UserRole.admin
+                    ? const AdminTabBar()
+                    : const UserTabBar(),
+                onLogout: () async {
+                  final isLoggedOut = await authViewmodel.logout();
+                  if (isLoggedOut && context.mounted) {
+                    GoRouter.of(context).goNamed(Routes.login.name);
+                  }
+                },
+              );
+            }),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(child: widget.child),
-          ),
-        ],
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(
+                  24,
+                ),
+                child: widget.child,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

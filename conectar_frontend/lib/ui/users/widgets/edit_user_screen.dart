@@ -32,54 +32,56 @@ class _EditUserScreenState extends State<EditUserScreen> {
   @override
   Widget build(BuildContext context) {
     final viewmodel = context.read<UsersViewmodel>();
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ListenableBuilder(
-            listenable: viewmodel,
-            builder: (context, _) {
-              return Skeletonizer(
-                enabled: viewmodel.isLoading,
-                child: UserForm(
-                  initialState: viewmodel.selectedUser,
-                  onCancel: () async {
-                    GoRouter.of(context).go(Routes.users.path);
-                  },
-                  onSubmit: (user, clients) async {
-                    final userId = user.id;
-
-                    if (userId == null) {
-                      return;
-                    }
-
-                    final removeClientIds =
-                        (viewmodel.selectedUser?.clients ?? [])
-                            .map((e) => e.id)
-                            .whereType<int>()
-                            .toList();
-
-                    final addClientids =
-                        clients.map((e) => e.id).whereType<int>().toList();
-
-                    await viewmodel.updateUserClients(
-                      userId,
-                      addClientIds: addClientids,
-                      removeClientIds: removeClientIds,
-                    );
-
-                    final response = await viewmodel.update(userId, user);
-
-                    if (response?.id != null && context.mounted) {
+    return Card(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ListenableBuilder(
+              listenable: viewmodel,
+              builder: (context, _) {
+                return Skeletonizer(
+                  enabled: viewmodel.isLoading,
+                  child: UserForm(
+                    initialState: viewmodel.selectedUser,
+                    onCancel: () async {
                       GoRouter.of(context).go(Routes.users.path);
-                    }
-                  },
-                ),
-              );
-            },
+                    },
+                    onSubmit: (user, clients) async {
+                      final userId = user.id;
+
+                      if (userId == null) {
+                        return;
+                      }
+
+                      final removeClientIds =
+                          (viewmodel.selectedUser?.clients ?? [])
+                              .map((e) => e.id)
+                              .whereType<int>()
+                              .toList();
+
+                      final addClientids =
+                          clients.map((e) => e.id).whereType<int>().toList();
+
+                      await viewmodel.updateUserClients(
+                        userId,
+                        addClientIds: addClientids,
+                        removeClientIds: removeClientIds,
+                      );
+
+                      final response = await viewmodel.update(userId, user);
+
+                      if (response?.id != null && context.mounted) {
+                        GoRouter.of(context).go(Routes.users.path);
+                      }
+                    },
+                  ),
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

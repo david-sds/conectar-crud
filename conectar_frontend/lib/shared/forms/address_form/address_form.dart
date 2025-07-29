@@ -66,14 +66,12 @@ class _AddressFormState extends State<AddressForm> {
                     }
                     return null;
                   },
-                  inputFormatters: [
-                    MaskTextInputFormatter(
-                      mask: '#####-###',
-                      filter: {'#': RegExp(r'[0-9]')},
-                      type: MaskAutoCompletionType.lazy,
-                      initialText: ctrl.zipCode,
-                    ),
-                  ],
+                  mask: MaskTextInputFormatter(
+                    mask: '#####-###',
+                    filter: {'#': RegExp(r'[0-9]')},
+                    type: MaskAutoCompletionType.lazy,
+                    initialText: ctrl.zipCode,
+                  ),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.search),
                     onPressed: () async {

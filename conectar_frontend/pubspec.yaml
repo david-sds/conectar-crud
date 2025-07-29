@@ -29,6 +29,7 @@ dependencies:
   collection: ^1.19.1
   intl: ^0.20.2
   flutter_secure_storage: ^4.2.1
+  dart_jsonwebtoken: ^3.2.0
 
 dev_dependencies:
   flutter_test:

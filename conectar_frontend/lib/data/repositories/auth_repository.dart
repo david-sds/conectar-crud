@@ -1,5 +1,6 @@
 import 'package:conectar_frontend/data/services/http_client_service.dart';
 import 'package:conectar_frontend/data/services/token_service.dart';
+import 'package:conectar_frontend/domain/models/token_decode/token_decode_model.dart';
 import 'package:dio/dio.dart';
 
 final _tokenService = TokenService();
@@ -139,5 +140,9 @@ class AuthRepository {
     );
 
     return true;
+  }
+
+  Future<TokenDecode?> getTokenDecode() async {
+    return await _tokenService.getJwtDecode();
   }
 }

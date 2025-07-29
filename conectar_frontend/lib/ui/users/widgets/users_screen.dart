@@ -34,8 +34,13 @@ class _UsersScreenState extends State<UsersScreen> {
       children: [
         Card(
           child: ExpansionTile(
+            leading: const Icon(
+              Icons.search,
+            ),
             title: const Text('Filtros'),
-            subtitle: const Text('Filtre ou busque itens na página.'),
+            subtitle: const Text(
+              'Filtre ou busque itens na página.',
+            ),
             children: [
               ListenableBuilder(
                   listenable: viewmodel,
@@ -84,6 +89,7 @@ class _UsersScreenState extends State<UsersScreen> {
                     },
                     child: const Text('Limpar campos'),
                   ),
+                  const SizedBox(width: 16),
                   FilledButton(
                     onPressed: viewmodel.applyFilters,
                     child: const Text('Filtrar'),

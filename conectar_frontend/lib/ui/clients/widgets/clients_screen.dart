@@ -34,7 +34,12 @@ class _ClientsScreenState extends State<ClientsScreen> {
       children: [
         Card(
           child: ExpansionTile(
-            title: const Text('Filtros'),
+            leading: const Icon(
+              Icons.search,
+            ),
+            title: const Text(
+              'Filtros',
+            ),
             subtitle: const Text('Filtre ou busque itens na página.'),
             children: [
               ListenableBuilder(
@@ -84,32 +89,46 @@ class _ClientsScreenState extends State<ClientsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  OutlinedButton(
-                    onPressed: () async {
-                      final success = await viewmodel.resetFilters();
+                  SizedBox(
+                    width: 140,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(padding: EdgeInsets.zero),
+                      onPressed: () async {
+                        final success = await viewmodel.resetFilters();
 
-                      if (success) {
-                        _nomeController.clear();
-                        _cnpjController.clear();
-                      }
-                    },
-                    child: const Text('Limpar campos'),
+                        if (success) {
+                          _nomeController.clear();
+                          _cnpjController.clear();
+                        }
+                      },
+                      child: const Text('Limpar campos'),
+                    ),
                   ),
-                  FilledButton(
-                    onPressed: viewmodel.applyFilters,
-                    child: const Text('Filtrar'),
+                  const SizedBox(width: 16),
+                  SizedBox(
+                    width: 140,
+                    child: FilledButton(
+                      style: FilledButton.styleFrom(padding: EdgeInsets.zero),
+                      onPressed: viewmodel.applyFilters,
+                      child: const Text('Filtrar'),
+                    ),
                   ),
                 ],
               ),
             ],
           ),
         ),
+        const SizedBox(
+          height: 12,
+        ),
         const Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ListTile(
-                title: Text('Clientes'),
+                title: Text(
+                  'Clientes',
+                ),
                 subtitle: Text(
                   'Selecione um cliente para editar suas informaçôes.',
                 ),

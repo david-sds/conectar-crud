@@ -33,7 +33,12 @@ class _LoginFormState extends State<LoginForm> {
     return Form(
       key: ctrl.formKey,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(
+          top: 32.0,
+          right: 24.0,
+          bottom: 24.0,
+          left: 24.0,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

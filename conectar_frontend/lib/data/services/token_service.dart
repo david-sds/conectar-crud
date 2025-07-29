@@ -1,5 +1,7 @@
 import 'dart:io' show Platform;
 
+import 'package:conectar_frontend/domain/models/token_decode/token_decode_model.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -65,5 +67,19 @@ class TokenService {
       await prefs.remove(_accessTokenKey);
       await prefs.remove(_refreshTokenKey);
     }
+  }
+
+  Future<TokenDecode?> getJwtDecode() async {
+    final accessToken = await getAccessToken();
+
+    if (accessToken == null) {
+      return null;
+    }
+
+    final decoded = JWT.tryDecode(accessToken);
+
+    return TokenDecode.fromJson(
+      (decoded?.payload ?? {}) as Map<String, dynamic>,
+    );
   }
 }

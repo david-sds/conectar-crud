@@ -1,6 +1,7 @@
 import 'package:conectar_frontend/core/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 enum InputType {
   text,
@@ -16,9 +17,10 @@ class CustomInput extends StatefulWidget {
     this.onChanged,
     this.validator,
     this.suffixIcon,
-    this.inputFormatters,
+    this.mask,
     this.initialValue,
     this.onFieldSubmitted,
+    this.inputFormatters,
     super.key,
   }) : type = InputType.text;
 
@@ -30,6 +32,7 @@ class CustomInput extends StatefulWidget {
     this.onChanged,
     this.validator,
     this.suffixIcon,
+    this.mask,
     this.inputFormatters,
     this.initialValue,
     this.onFieldSubmitted,
@@ -44,6 +47,7 @@ class CustomInput extends StatefulWidget {
   final String? Function(String? value)? validator;
   final InputType type;
   final Widget? suffixIcon;
+  final MaskTextInputFormatter? mask;
   final List<TextInputFormatter>? inputFormatters;
   final String? initialValue;
   final void Function(String)? onFieldSubmitted;
@@ -61,6 +65,13 @@ class _CustomInputState extends State<CustomInput> {
     _controller = widget.controller ?? TextEditingController();
     _obscureText = widget.type == InputType.password;
     _controller.value = TextEditingValue(text: widget.initialValue ?? '');
+
+    final maskedInitialValue = widget.mask?.maskText(widget.initialValue ?? '');
+
+    _controller.value = maskedInitialValue != null
+        ? TextEditingValue(text: maskedInitialValue)
+        : TextEditingValue.empty;
+
     super.initState();
   }
 
@@ -91,6 +102,7 @@ class _CustomInputState extends State<CustomInput> {
                 style: BorderStyle.solid,
               ),
             ),
+            visualDensity: VisualDensity.compact,
           ),
           child: Icon(
             !_obscureText
@@ -106,6 +118,7 @@ class _CustomInputState extends State<CustomInput> {
 
   @override
   Widget build(BuildContext context) {
+    final maskInputFormatter = widget.mask;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -121,7 +134,10 @@ class _CustomInputState extends State<CustomInput> {
           onChanged: widget.onChanged,
           validator: widget.validator,
           obscureText: _obscureText,
-          inputFormatters: widget.inputFormatters,
+          inputFormatters: [
+            ...(widget.inputFormatters ?? []),
+            if (maskInputFormatter != null) maskInputFormatter
+          ],
           onFieldSubmitted: widget.onFieldSubmitted,
         ),
       ],

@@ -114,7 +114,7 @@ GoRouter createRouter(BuildContext context) {
       GoRoute(
         name: Routes.initial.name,
         path: Routes.initial.path,
-        redirect: (context, state) => Routes.clients.path,
+        redirect: (context, state) => Routes.login.path,
       ),
       _loggedStack,
       _notLoggedStack,

@@ -14,6 +14,7 @@ class CustomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      actionsPadding: const EdgeInsets.all(8),
       title: Row(
         children: [
           SizedBox(
@@ -25,9 +26,6 @@ class CustomAppBar extends StatelessWidget {
                 BlendMode.srcIn,
               ),
             ),
-          ),
-          const SizedBox(
-            width: 18,
           ),
           Flexible(
             child: tabBar,

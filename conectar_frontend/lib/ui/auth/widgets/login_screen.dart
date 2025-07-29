@@ -19,48 +19,54 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final viewmodel = context.read<AuthViewmodel>();
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: 200,
-          height: 100,
-          child: SvgPicture.asset(
-            'assets/images/logo.svg',
-            colorFilter: const ColorFilter.mode(
-              Colors.white,
-              BlendMode.srcIn,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 200,
+            height: 100,
+            child: SvgPicture.asset(
+              'assets/images/logo.svg',
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
             ),
           ),
-        ),
-        SizedBox(
-          width: 500,
-          child: Card(
-            child: LoginForm(
-              onSubmit: (credentials) async {
-                final isLoggedIn = await viewmodel.login(credentials);
+          const SizedBox(
+            height: 16,
+          ),
+          SizedBox(
+            width: 550,
+            child: Card(
+              child: LoginForm(
+                onSubmit: (credentials) async {
+                  final isLoggedIn = await viewmodel.login(credentials);
 
-                if (!context.mounted) {
-                  return;
-                }
+                  if (!context.mounted) {
+                    return;
+                  }
 
-                if (isLoggedIn) {
-                  GoRouter.of(context).goNamed(Routes.clients.name);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Credenciais inválidas',
+                  if (isLoggedIn) {
+                    GoRouter.of(context).goNamed(Routes.clients.name);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Credenciais inválidas',
+                        ),
                       ),
-                    ),
-                  );
-                }
-              },
+                    );
+                  }
+                },
+              ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 }

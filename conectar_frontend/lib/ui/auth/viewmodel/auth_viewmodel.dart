@@ -1,6 +1,7 @@
 import 'package:conectar_frontend/data/repositories/auth_repository.dart';
 import 'package:conectar_frontend/data/repositories/users_repository.dart';
 import 'package:conectar_frontend/domain/models/credentials/credentials_model.dart';
+import 'package:conectar_frontend/domain/models/token_decode/token_decode_model.dart';
 import 'package:conectar_frontend/domain/models/user_details/user_details_model.dart';
 import 'package:flutter/material.dart';
 
@@ -113,5 +114,21 @@ class AuthViewmodel extends ChangeNotifier {
       debugPrint('Error while changing password => $e');
     }
     return false;
+  }
+
+  TokenDecode? _tokenDecode;
+  TokenDecode? get tokenDecode => _tokenDecode;
+  void setTokenDecode(TokenDecode? value) {
+    _tokenDecode = value;
+    notifyListeners();
+  }
+
+  Future<TokenDecode?> loadTokenDecode() async {
+    final tokenDecode = await _authRepository.getTokenDecode();
+
+    _tokenDecode = tokenDecode;
+    notifyListeners();
+
+    return tokenDecode;
   }
 }

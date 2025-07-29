@@ -51,9 +51,7 @@ class _ClientFormState extends State<ClientForm> {
                     onPressed: widget.onCancel,
                     child: const Text('Cancelar'),
                   ),
-                  const SizedBox(
-                    width: 8,
-                  ),
+                  const SizedBox(width: 16),
                   FilledButton(
                     onPressed: () async {
                       final isValid = ctrl.validate();
@@ -98,14 +96,12 @@ class _ClientFormState extends State<ClientForm> {
                 onChanged: (value) {
                   ctrl.setCnpj(value.filterNumberOnly());
                 },
-                inputFormatters: [
-                  MaskTextInputFormatter(
-                    mask: '##.###.###/####-##',
-                    filter: {'#': RegExp(r'[0-9]')},
-                    type: MaskAutoCompletionType.lazy,
-                    initialText: ctrl.cnpj,
-                  ),
-                ],
+                mask: MaskTextInputFormatter(
+                  mask: '##.###.###/####-##',
+                  filter: {'#': RegExp(r'[0-9]')},
+                  type: MaskAutoCompletionType.lazy,
+                  initialText: ctrl.cnpj,
+                ),
                 validator: (value) {
                   if (value == null || value == '') {
                     return 'Obrigatório';

@@ -57,9 +57,7 @@ class _UserFormState extends State<UserForm> {
                     onPressed: widget.onCancel,
                     child: const Text('Cancelar'),
                   ),
-                  const SizedBox(
-                    width: 8,
-                  ),
+                  const SizedBox(width: 16),
                   FilledButton(
                     onPressed: () async {
                       final isValid = ctrl.validate();

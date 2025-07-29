@@ -30,22 +30,39 @@ class UsersTable extends StatelessWidget {
 
         return Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomPagination(
-                  paginationOutput: viewmodel.paginationOutput,
-                  onChangePage: (pageNumber) async {
-                    await viewmodel.changePage(pageNumber);
-                  },
-                ),
-                OutlinedButton(
-                  onPressed: () {
-                    GoRouter.of(context).pushNamed(Routes.createUser.name);
-                  },
-                  child: const Text('Novo'),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Row(
+                children: [
+                  ListenableBuilder(
+                    listenable: viewmodel,
+                    builder: (context, widget) {
+                      return CustomPagination(
+                        paginationOutput: viewmodel.paginationOutput,
+                        onChangePage: (pageNumber) async {
+                          await viewmodel.changePage(pageNumber);
+                        },
+                      );
+                    },
+                  ),
+                  const Spacer(),
+                  OutlinedButton(
+                    onPressed: () {
+                      GoRouter.of(context).pushNamed(Routes.createUser.name);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.onSurface,
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    child: const Text('Novo'),
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  )
+                ],
+              ),
             ),
             if (viewmodel.users.isEmpty && !viewmodel.isLoading)
               const ListTile(
