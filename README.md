@@ -16,6 +16,8 @@ Existe um endpoint desprotegido de propósito para facilitar o acesso ao sistema
 
 ### Backend
 
+Crie um arquivo `.env` com o conteúdo do arquivo `.env.example`.
+
 ```bash
 cd conectar_backend
 docker-compose up -d
