@@ -46,6 +46,6 @@ flutter run -d chrome
     - GoRouter para navegação declarativa com guards.
 
 - **Autenticação**
-    Backend gera JWT, armazenado no frontend.
-    Refresh Token é salvo no banco de dados e usado para verificações.
-    Frontend armazena o token via flutter_secure_storage (SharedPreferences para web).
+    - Backend gera JWT, armazenado no frontend.
+    - Refresh Token é salvo no banco de dados e usado para verificações.
+    - Frontend armazena o token via flutter_secure_storage (SharedPreferences para web).
